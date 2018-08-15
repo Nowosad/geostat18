@@ -63,13 +63,13 @@ knitr::include_graphics("figs/geopat2_four_types.png")
 ---
 ### GeoPAT 2
 
-GeoPAT 2 (Geospatial Pattern Analysis Toolbox) is a standalone suite of modules written in C and dedicated to analysis of large Earth Science datasets in their entirety using spatial and/or temporal patterns. 
-Global scale, high resolution spatial datasets are available but are mostly used in small pieces for local studies. 
+GeoPAT 2 (Geospatial Pattern Analysis Toolbox) is a standalone suite of modules written in C and dedicated to the analysis of large Earth Science datasets in their entirety using spatial and/or temporal patterns. 
+Global scale, high-resolution spatial datasets are available but are mostly used in small pieces for local studies. 
 GeoPAT enables studying them in their entirety.
-GeoPAT’s core idea is to tessellate global spatial data into grid of square blocks of original cells (pixels).
+GeoPAT’s core idea is to tessellate global spatial data into a grid of square blocks of original cells (pixels).
 This transforms data from its original form (huge number of cells each having simple content) to a new form (much smaller number of supercells/blocks with complex content).
 Complex cell contains a pattern of original variable.
-GeoPAT provides means for succinct description of such patterns and for calculation of similarity between patterns.
+GeoPAT provides means for a succinct description of such patterns and for calculation of similarity between patterns.
 This enables spatial analysis such as search, change detection, segmentation, and clustering to be performed on the grid of complex cells (local patterns).
 
 ```{r, echo=FALSE, fig.cap="Command-line interface of GeoPAT 2", out.width=800, fig.align='center'}
@@ -460,7 +460,7 @@ knitr::include_graphics("figs/search_pattern.png")
 knitr::include_graphics("figs/search_result.png")
 ```
 Dataset: NLCD 2011. 
-Red color indicates larger similarity.
+Red color indicates a larger similarity.
 Online application available at http://sil.uc.edu/webapps/landex_usa/.
 ]
 
@@ -494,7 +494,7 @@ Usually, the process is the same as in the example above - values in the image B
 This can be used to determine how land cover changes.
 Two raster land cover maps are just analyzed pixel by pixel, e.g. this pixel did change from forest to agriculture and that pixel did not change as it is classified as forest on both maps.
 It a good approach when we are interested in, e.g. overall changes over an extended area.
-This way you can say, for example, that globally in the last 25 year we lost this area of forest, but gain this area of agriculture.
+This way you can say, for example, that globally in the last 25 year we lost this area of forest, but gained this area of agriculture.
 
 ---
 ### Compare
@@ -515,7 +515,7 @@ When we compare it using the standard method (pixel by pixel) we get the result 
 knitr::include_graphics("figs/compare01b.png")
 ```
 
-The changes analyzed this way are very prominent - about a half of the area had changed the category.
+The changes analyzed this way are very prominent - about half of the area had changed the category.
 However, when you look back at the whole landscape in time A and B, you should notice that both images are very similar if one disregards details and orientations. 
 They both have the same number of categories, their share in the landscape is comparable and they are arranged in a similar spatial pattern.
 While we can say that many pixels have changed their values, we cannot say that this landscape’s pattern changed a lot. 
@@ -566,7 +566,7 @@ gpat_compare -i patterns2000.grd -i patterns2015.grd -o similarity0015.tif -m js
 
 The result is a raster map of similarities between Australia's land cover in 2000 and 2015.
 Each pixel in this raster has a resolution of 15,000 meters and a value between 0 and 1.
-The largest value, 1, means that the spatial pattern in these two years is identical (no change in pattern has occured), while lower values represent areas with more and more dissimilar patterns (increasing degree of change in pattern has occured).
+The largest value, 1, means that the spatial pattern in these two years is identical (no change in pattern has occurred), while lower values represent areas with more and more dissimilar patterns (increasing degree of change in pattern has occurred).
 
 ```{r, echo=FALSE, fig.cap="Similarity of land cover patterns (a magnitude of pattern change) between the years 2000 and 2015", out.width=500, fig.align='center'}
 knitr::include_graphics("figs/compare03.png")
@@ -685,7 +685,7 @@ knitr::include_graphics("figs/segmentation01.png")
 ---
 ### Segmentation - step 2
 
-ne of the most important concepts here is the way how motifels are created.
+one of the most important concepts here is the way how motifels are created.
 Segmentation differs in this element from the rest of the spatial pattern-based analysis, as it uses so-called "brick topology".
 Before the segmentation process can even start, grid created in the first step is transformed into a set "bricks" consisting of four motifels that are laid in alternate layers (see the figure below).
 Therefore, when you set the size to 25 in the first step, the segmented motifels would have a size of 50 by 50 cells (four motifels of 25 by 25).
@@ -997,13 +997,13 @@ class: middle, center
 knitr::include_graphics("figs/pattern_analysis.png")
 ```
 Example: **Global land cover patterns** were segmented into **homogeneous areas** and their patterns were analysed with **landscape metrics**.
-The results showed dependence of land cover spatial configuration on two parameters, **complexity (C)** and **aggregation (A)**. 
+The results showed a dependence of land cover spatial configuration on two parameters, **complexity (C)** and **aggregation (A)**. 
 ]
 
 .pull-right[
 - **Global environmental changes** -- analysis of changes in patterns of different environmental features, such as land cover 
 - **Global ecology** - delineation of ecoregions -- regionalization of land into homogeneous units of similar ecological and physiographic features (land cover, landform, soils, climate)
-- **Forestry** - regionalization of forest patterns -- results could be used for conservation, planning and management
+- **Forestry** - regionalization of forest patterns -- results could be used for conservation, planning, and management
 - **Agriculture** - identification of spatial patterns of cropland usage
 - **Landscape ecology** - inventory of landscape patterns and analysis of landscape spatial configuration
 ]
@@ -1011,12 +1011,12 @@ The results showed dependence of land cover spatial configuration on two paramet
 ---
 ### Conclustions
 
-- Pattern-based spatial analysis uses **blocks of pixels (motifels)** to represent local pattern
-- This way **a large number of small simple cells are transformed into smaller number of large complex cells**
+- The pattern-based spatial analysis uses **blocks of pixels (motifels)** to represent a local pattern
+- This way **a large number of small simple cells are transformed into a smaller number of large complex cells**
 - This approach allows for **searching, detecting changes, segmentation, and clustering** of local patterns
 - Main ideas behind the pattern-based spatial analysis are implemented in **GeoPAT 2.0**
 - **The GeoPAT 2.0 software** and its **user’s manual** are available through the Space Informatics Lab website at http://sil.uc.edu
-- GeoPAT **does not require supercomputer or cloud computing** because core calculations are performed on a grid orders of magnitude smaller than a grid of original data
+- GeoPAT **does not require supercomputer or cloud computing** because core calculations are performed on grid orders of magnitude smaller than a grid of original data
 - GeoPAT also allows for **temporal analysis** of large spatial datasets (see [the manual](http://doi.org/10.5281/zenodo.1185408))
 - If you want to learn more about the pattern-based spatial analysis read [the official GeoPAT 2 manual](https://zenodo.org/record/1291123). 
 It contains installation instructions, description of the GeoPAT 2 architecture, several workflow paths with examples, and explanations of numerical signatures, dissimilarity measures, and topologies available in GeoPAT 2.
