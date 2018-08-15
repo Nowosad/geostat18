@@ -110,3 +110,10 @@ table {
 table thead th { border-bottom: 1px solid #ddd; }
 th, td { padding: 5px; }
 tr:nth-child(even) { background: #eee }
+
+/* caption font*/
+.caption {
+	font-style: italic;
+  color: #606090;
+	font-size: 90%;
+}
