@@ -465,11 +465,6 @@ Online application available at http://sil.uc.edu/webapps/landex_usa/.
 ]
 
 ---
-### Search - resources
-
-<!--papers??-->
-
----
 layout: false
 class: middle, center
 
@@ -596,10 +591,9 @@ knitr::include_graphics("figs/compare04.png")
 knitr::include_graphics("figs/change_det.png")
 ```
 
----
-### Compare - resources
+- **Nowosad, J., Stepinski T.F., Netzel P.**, 2018. *Global mapping of changes in landscapes and coverages of vegetation types from the ESA land cover 1992-2015 time series*. https://dx.doi.org/10.31223/osf.io/k3rmn
 
-<!--papers??-->
+- **Netzel, P. and Stepinski, T.F.**, 2015. *Pattern-Based Assessment of Land Cover Change on Continental Scale With Application to NLCD 2001–2006*. IEEE Transactions on Geoscience and Remote Sensing, 53(4), pp.1773-1781.
 
 ---
 layout: false
@@ -783,8 +777,12 @@ As a result, the output segmentation seems more clunky and the segments are alig
 ---
 ### Segmentation - resources
 
----
-### Segmentation - resources
+- **Nowosad, J. and Stepinski, T. F.**, 2018. *Towards machine ecoregionalization of Earth's landmass using pattern segmentation method*. International Journal of Applied Earth Observation and Geoinformation, 69, pp.110-118.
+- **Nowosad, J. and Stepinski, T. F.**, 2018. *Global inventory of landscape patterns and latent variables of landscape spatial configuration*. Ecological Indicators, 89, pp.159-167.
+-- **Jasiewicz, J., Stepinski, T., & Niesterowicz, J.**, 2018. Multi-scale segmentation algorithm for pattern-based partitioning of large categorical rasters. Computers & Geosciences.
+- **Niesterowicz, J. and Stepinski, T.F.**, 2017. *Pattern-based, multi-scale segmentation and regionalization of EOSD land cover*. International Journal of Applied Earth Observation and Geoinformation, 62, pp.192-200.
+- **Niesterowicz, J., Stepinski, T.F. and Jasiewicz, J.**, 2016. *Unsupervised regionalization of the United States into landscape pattern types*. International Journal of Geographical Information Science, 30(7), pp.1450-1468.
+- **Stepinski, T.F., Niesterowicz, J. and Jasiewicz, J.**, 2015. *Pattern-based regionalization of large geospatial datasets using complex object-based image analysis*. Procedia Computer Science, 51, pp.2168-2177.
 
 ---
 layout: false
@@ -856,8 +854,6 @@ For example, cluster 6 is a mosaic of grassland and sparse vegetation and cluste
 ---
 ### Clustering - code
 
----
-### Clustering - resources
 
 ---
 layout: false
@@ -1023,6 +1019,25 @@ It contains installation instructions, description of the GeoPAT 2 architecture,
 
 We also encourage users to submit issues and enhancement requests so we may continue to improve our software. 
 Furthermore, if you have any question related to GeoPAT 2 please email me at nowosad.jakub@gmail.com.
+
+---
+## Additional resources
+
+The blog post series introducing [GeoPAT 2 - a software for pattern-based spatial and temporal analysis](http://sil.uc.edu/cms/index.php?id=geopat2) are:
+
+1. [GeoPAT 2: Software for Pattern-Based Spatial and Temporal Analysis](/post/geopat-2-software-for-pattern-based-spatial-and-temporal-analysis)
+2. [Pattern-based Spatial Analysis - core ideas](/post/pattern-based-spatial-analysis-core-ideas)
+3. [Finding similar local landscapes](/post/geopat-2-search)
+4. [Quantifying temporal change of landscape pattern](/post/geopat-2-compare)
+5. [Pattern-based regionalization](/post/geopat-2-segmentation)
+
+If you want to learn more about the pattern-based spatial analysis read [the official GeoPAT 2 manual](https://zenodo.org/record/1291123). 
+It contains installation instructions, description of the GeoPAT 2 architecture, several workflow paths with examples, and explanations of numerical signatures, dissimilarity measures, and topologies available in GeoPAT 2.
+
+
+- **Jasiewicz, J., Netzel, P. and Stepinski, T.**, 2015.* GeoPAT: A toolbox for pattern-based information retrieval from large geospatial databases*. Computers & Geosciences, 80, pp.62-73.
+- **Jasiewicz, J., Netzel, P. and Stepinski, T.F.**, 2014. *Landscape similarity, retrieval, and machine mapping of physiographic units*. Geomorphology, 221, pp.104-112.
+- **Jasiewicz, J. and Stepinski, T.F.**, 2013. *Example-based retrieval of alike land-cover scenes from NLCD2006 database*. IEEE Geoscience and Remote Sensing Letters, 10(1), pp.155-159.
 
 ---
 layout: false
