@@ -25,6 +25,17 @@ class: middle, center
 # Introduction
 
 ---
+### Introduction
+
+
+---
+### Introduction
+
+
+---
+### Introduction
+
+---
 layout: false
 class: middle, center
 
@@ -169,11 +180,57 @@ class: middle, center
 # Installation
 
 ---
+## Installation
+
+**Windows installer**
+
+The Windows x64 installer is available at http://sil.uc.edu/cms/data/uploads/software_data/GPAT2/GPAT2setup.exe
+
+**Building from source code**
+
+To build **GeoPAT** 2 from the source code, the development files for GDAL are required.
+They can be installed on Ubuntu using:
+
+```bash
+sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable --yes
+sudo apt-get --yes --force-yes update -qq
+sudo apt-get install --yes libgdal-dev
+```
+... or on Fedora with:
+
+```bash
+sudo dnf install gdal-devel
+```
+
+The source code of **GeoPAT** 2 is available at https://github.com/Nowosad/geopat2/archive/master.zip. 
+This archive should be unpacked, compiled and installed:
+
+```bash
+make
+sudo make install
+```
+
+---
+## Installation
+
+Some examples also use **rgeopat2** - [an R package with additional functions for GeoPAT 2](https://github.com/Nowosad/rgeopat2):
+
+```{r, eval=FALSE}
+install.packages("rgeopat2")
+```
+
+---
 layout: false
 class: middle, center
 
 # Datasets
 
+---
+## Datasets
+
+- [cci_lc2015.tif](http://sil.uc.edu/cms/data/uploads/software_data/gpat2bp/cci_lc2015.zip)
+- [cci_lc2000.tif](http://sil.uc.edu/cms/data/uploads/software_data/gpat2bp/cci_lc2000.zip)
+- [tnc_terr_ecoregions.tif](http://sil.uc.edu/cms/data/uploads/software_data/gpat2bp/tnc_terr_ecoregions.zip)
 
 ---
 layout: false
@@ -326,7 +383,21 @@ gpat_search -i reference.grd -o similarity_output -r query_signature.txt -m jsd
 ---
 ### Search - resources
 
-<!--webapp-->
+.left-column2[
+```{r, out.width="350px", echo=FALSE}
+knitr::include_graphics("figs/search_pattern.png")
+```
+- **Query** - diverse landscape in the north Wisconsin (1.5 x 1.5 km)
+- Mosaic of a mixed forest, evergreen forest, shrubs, woody wetlands, and water
+]
+.right-column2[
+```{r, out.width="700px", echo=FALSE}
+knitr::include_graphics("figs/search_result.png")
+```
+Dataset: NLCD 2011. 
+Red color indicates larger similarity.
+Online application available at http://sil.uc.edu/webapps/landex_usa/.
+]
 
 ---
 ### Search - resources
@@ -456,8 +527,14 @@ knitr::include_graphics("figs/compare04.png")
 ---
 ### Compare - resources
 
+```{r, out.width="850px", echo=FALSE}
+knitr::include_graphics("figs/change_det.png")
+```
+
 ---
 ### Compare - resources
+
+<!--papers??-->
 
 ---
 layout: false
@@ -651,16 +728,236 @@ class: middle, center
 # Clustering
 
 ---
+### Clustering
+
+You can also calculate similarity matrices between motifels, points, or polygons using `gpat_distmtx`. 
+It accepts outputs from `gpat_grid2txt`, `gpat_pointshis`, or `gpat_polygon` and returns a CSV file containing a similarity matrix - also known as a distance matrix.
+Below, we focus on the output from `gpat_grid2txt`.
+Read [the GeoPAT 2 manual](https://zenodo.org/record/1291123) to see examples of clustering based on the output of `gpat_pointshis` and `gpat_polygon`.
+
+```{bash, eval=FALSE}
+gpat_distmtx -i patterns2015.txt -o similarity2015.csv
+```
+
+The output, `similarity2015.csv`, can be read into your preferable software to apply any clustering method that depends on a distance matrix.
+
+---
+### Clustering
+
+For example, the `gpat_read_distmtx()` function can be used to read the data in R:
+
+```{r, eval=FALSE}
+dist_2015 = gpat_read_distmtx("similarity2015.csv")
+```
+
+This new object, `dist_2015`, is of the `dist` class and therefore can be used by many clustering functions, including hierarchical clustering (`hclust()`), or k-medoids clustering methods (`cluster::pam()`).
+
+Let's try a simple example:
+
+```{r, eval=FALSE}
+hclust_result = hclust(d = dist_2015, method = "ward.D2")
+plot(hclust_result, labels = FALSE)
+rect.hclust(hclust_result, k = 12, border = "blue")
+hclust_cut = cutree(hclust_result, 12)
+my_grid$class = hclust_cut
+plot(my_grid["class"])
+```
+
+---
+### Clustering
+
+We cluster motifels based on the dissimilarity matrix output of GeoPAT 2 using hierarchical clustering (function `hclust()`).
+Based on the dendrogram visualization (`plot()`), we decide that the data should be divided into 12 clusters (`cutree()`):
+
+```{r, echo=FALSE, fig.cap="Dendrogram representing hierarchical clustering", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/extend03a.png")
+```
+
+---
+### Clustering
+
+Finally, we add identifiers of the new clusters to our spatial object containing a grid of motifels and visualize it:
+
+```{r, echo=FALSE, fig.cap="A map of Australia divided into twelve clusters based on the similarity of land cover composition", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/extend03b.png")
+```
+
+
+The output is a map with motifels grouped into the areas of the similar land cover composition.
+Some of the clusters represent one dominant land cover category, e.g. cluster 1 is water, cluster 3 is shrubland, and cluster 7 is sparse vegetation.
+On the other hand, some of the clusters can consist of many land cover categories.
+For example, cluster 6 is a mosaic of grassland and sparse vegetation and cluster 8 is a mosaic of sparse vegetation and shrubland.
+
+---
+### Clustering - code
+
+---
+### Clustering - resources
+
+---
 layout: false
 class: middle, center
 
 # Extendibility
 
 ---
+### Extendibility
+
+GeoPAT 2 gives its users a lot of freedom, having a large number of possible workflows:
+
+
+```{r, echo=FALSE, fig.cap="ROutline of the GeoPAT 2 architecture", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/gpat2.png")
+```
+
+Some of them can consist of only one step, while others require several steps.
+However, that is not the end of GeoPAT 2 capabilities - it is also possible to extract spatial signature or calculate distance matrix and use these outputs in further analysis outside of GeoPAT 2.
+For example, you can cluster areas of similar patterns or use machine learning methods to find numerical relationships between patterns descriptors and other variables.
+Finally, there are several experimental features of GeoPAT 2, including a set of methods for analysis of spatiotemporal data.
+
+---
+### Extracting information about spatial patterns
+
+Most of the GeoPAT 2 modules depends on spatial information about patterns in the form of [signatures](/post/pattern-based-spatial-analysis-core-ideas/#signature).
+We can then [find the most similar signatures (search)](/post/geopat-2-search), [compare local signatures (comparison)](/post/geopat-2-compare), or [merge areas with similar signatures (segmentation)](/post/geopat-2-segmentation). 
+This information can be also used outside of GeoPAT 2 - it is possible to fit a spatial pattern information to your own workflow.
+
+There are three main ways to extract information about spatial patterns.
+The first one extracts information from a regular grid of motifels.
+In the example below, we create a grid of motifels with information about the composition of land cover categories (`-s prod`).
+Next, using `gpat_grid2txt` we convert the output grid file into a text file that can be read by standard software, such as R, Python, Excel.
+
+```{bash, eval=FALSE}
+gpat_gridhis -i cci_lc2015.tif -o patterns2015.grd -s prod -z 200 -f 200
+gpat_grid2txt -i patterns2015.grd -o patterns2015.txt
+```
+
+---
+### Extracting information about spatial patterns
+
+The second one extracts a spatial pattern information based on point coordinates within the given buffer.
+Below, we extract a land cover composition (Cartesian product) of a square area of 30 by 30 pixels (9km by 9km) around Australia's capital - Canberra:
+
+```{bash, eval=FALSE}
+gpat_pointshis -i cci_lc2015.tif -o patterns_pts.txt -s prod -z 30 -x 1370000 -y -4050000
+```
+
+---
+### Extracting information about spatial patterns
+
+The third one involves extracting information about spatial patterns using irregular polygons with `gpat_polygon`.
+Let's say, we are interested in extracting land cover composition in each of TNC's terrestrial ecoregions in Australia.
+*(Due to large sizes of some ecoregions, the below calculation can require about 16GB RAM available.)*
+
+```{bash, eval=FALSE}
+gpat_polygon -i cci_lc2015.tif -e tnc_terr_ecoregions.tif -o patterns_poly.txt -s prod
+```
+
+---
+### Extracting information about spatial patterns
+
+To ease some of the non-standard GeoPAT 2 operations we created an R package called **rgeopat2**.
+
+```{r, eval=FALSE}
+library(rgeopat2)
+```
+
+Its function `gpat_read_txt()` reads the output text from GeoPAT 2 and formats it in a convinent way:
+
+```{r, eval=FALSE}
+patterns_poly = gpat_read_txt("patterns_poly.txt")
+```
+
+```{r, eval=FALSE, echo=FALSE}
+knitr::kable(patterns_poly[c(1, 34), ], digits = 2, caption = "Example of two lines from the gpat_read_txt() output")
+```
+
+|   |   X1|   X2| X3|   X4|   X5|   X6|   X7|   X8|   X9| X10|  X11| X12|  X13|  X14|  X15|  X16| X17|  X18|  X19|  X20| X21|  X22|   cat|
+|:--|----:|----:|--:|----:|----:|----:|----:|----:|----:|---:|----:|---:|----:|----:|----:|----:|---:|----:|----:|----:|---:|----:|-----:|
+|1  | 0.00| 0.00|  0| 0.00| 0.00| 0.00| 0.00| 0.00| 0.00|   0| 0.00|   0| 0.00| 0.00| 0.00| 0.00|   0| 0.00| 0.00| 0.00|   0| 1.00|     0|
+|34 | 0.00| 0.00|  0| 0.00| 0.00| 0.00| 0.00| 0.00| 0.00|   0| 0.00|   0| 0.00| 0.00| 0.54| 0.45|   0| 0.00| 0.00| 0.00|   0| 0.00| 10072|
+
+Table: Example of two lines from the gpat_read_txt() output
+
+The last column in this table, `cat`, represents the id of the terrestrial ecoregion, while the rest of the columns are the land cover categories.
+For example, `cat` 0 is an ocean and 100% of its area is covered by water (class X22), while `cat` 10072, Gibson Desert, is located in the middle of the continent and is covered by grassland (X15) and sparse vegetation (X16).
+
+---
+### Spatiotemporal pattern-based analysis
+
+GeoPAT 2 also offers several additional features, including spatiotemporal pattern-based analysis.
+It is highly experimental, but already can be executed and tested.
+Let's take a look at a couple examples from [the GeoPAT 2 manual](https://zenodo.org/record/1291123).
+
+The input data is a set of twelve rasters of monthly sums of precipitation for the area of the British Isles from [the WorldClim database](http://www.worldclim.org/). 
+Each raster has 76560 pixels (240 rows and 319 columns).
+In other words, each pixel has 12 values representing temporal precipitation pattern.
+
+```{r, echo=FALSE, fig.cap="Monthly sums of precipitation for the area of the British Isles", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/extend04a.png")
+```
+
+---
+### Spatiotemporal pattern-based analysis
+
+Many GeoPAT 2 methods for spatial data also work with spatiotemporal datasets.
+For example, it is possible to regionalize the British Isles based on its annual precipitation patterns.
+Each region has similar temporal precipitation pattern.
+
+```{r, echo=FALSE, fig.cap="Regions of the similar annual precipitation patterns for the British Isles", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/extend04b.png")
+```
+
+---
+### Spatiotemporal pattern-based analysis
+
+Another GeoPAT 2 application is clustering of spatiotemporal data.
+For example, we can extract temporal precipitation patterns of 97 largest cities in the British Isles and cluster them:
+
+```{r, echo=FALSE, fig.cap="Example of a time series clustering", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/extend04c.png")
+```
+
+---
 layout: false
 class: middle, center
 
 # Conclusions
+
+---
+### Conclustions
+
+.pull-left[
+```{r, out.width="375px", echo=FALSE}
+knitr::include_graphics("figs/pattern_analysis.png")
+```
+Example: **Global land cover patterns** were segmented into **homogeneous areas** and their patterns were analysed with **landscape metrics**.
+The results showed dependence of land cover spatial configuration on two parameters, **complexity (C)** and **aggregation (A)**. 
+]
+
+.pull-right[
+- **Global environmental changes** -- analysis of changes in patterns of different environmental features, such as land cover 
+- **Global ecology** - delineation of ecoregions -- regionalization of land into homogeneous units of similar ecological and physiographic features (land cover, landform, soils, climate)
+- **Forestry** - regionalization of forest patterns -- results could be used for conservation, planning and management
+- **Agriculture** - identification of spatial patterns of cropland usage
+- **Landscape ecology** - inventory of landscape patterns and analysis of landscape spatial configuration
+]
+
+---
+### Conclustions
+
+- Pattern-based spatial analysis uses **blocks of pixels (motifels)** to represent local pattern
+- This way **a large number of small simple cells are transformed into smaller number of large complex cells**
+- This approach allows for **searching, detecting changes, segmentation, and clustering** of local patterns
+- Main ideas behind the pattern-based spatial analysis are implemented in **GeoPAT 2.0**
+- **The GeoPAT 2.0 software** and its **user’s manual** are available through the Space Informatics Lab website at http://sil.uc.edu
+- GeoPAT **does not require supercomputer or cloud computing** because core calculations are performed on a grid orders of magnitude smaller than a grid of original data
+- GeoPAT also allows for **temporal analysis** of large spatial datasets (see [the manual](http://doi.org/10.5281/zenodo.1185408))
+- If you want to learn more about the pattern-based spatial analysis read [the official GeoPAT 2 manual](https://zenodo.org/record/1291123). 
+It contains installation instructions, description of the GeoPAT 2 architecture, several workflow paths with examples, and explanations of numerical signatures, dissimilarity measures, and topologies available in GeoPAT 2.
+
+We also encourage users to submit issues and enhancement requests so we may continue to improve our software. 
+Furthermore, if you have any question related to GeoPAT 2 please email me at nowosad.jakub@gmail.com.
 
 ---
 layout: false
