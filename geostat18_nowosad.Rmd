@@ -437,7 +437,7 @@ knitr::include_graphics("figs/search04.png")
 ```
 
 ---
-### Search
+### Search - code
 
 ```{bash, eval=FALSE}
 gpat_pointshis -i cci_lc2015.tif -o query_signature.txt -s cooc -x 1457570 -y -3562186 -z 20
@@ -585,6 +585,15 @@ knitr::include_graphics("figs/compare04.png")
 ```
 
 ---
+### Compare - code
+
+```{bash, eval = FALSE}
+gpat_gridhis -i cci_lc2000.tif -o patterns2000.grd -z 50 -f 50 -s cooc 
+gpat_gridhis -i cci_lc2015.tif -o patterns2015.grd -z 50 -f 50 -s cooc
+gpat_compare -i patterns2000.grd -i patterns2015.grd -o similarity0015.tif -m jsd
+```
+
+---
 ### Compare - resources
 
 ```{r, out.width="850px", echo=FALSE}
@@ -706,6 +715,11 @@ knitr::include_graphics("figs/segmentation03.png")
 
 As I have mentioned in the introduction, ground truth does not exist in the pattern-based regionalization. 
 However, we can measure several properties of the output segments and they could give us an insight into how good our results are.
+
+```{bash, eval = FALSE}
+gpat_segquality -i patterns2015.grd -s segments2015.tif -g inhomogeneity2015.tif -o isolation2015.tif
+```
+
 All of them have values between 0 and 1.
 The most important first-order property is inhomogeneity, which tells how internally inconsistent each segment is.
 Our main goal of segmentation is to obtain regions of homogeneous patterns, therefore we want this value to be as low as possible. 
@@ -773,6 +787,15 @@ It gave fairly similar results to the Janson-Shannon divergence but different in
 And finally, example E used a root topology (also know as 4-connectivity). 
 In the growing stage, it can only use neighbors from the left, right, top, and bottom.
 As a result, the output segmentation seems more clunky and the segments are aligned along horizontal and vertical lines.
+
+---
+### Segmentation - code
+
+```{bash, eval = FALSE}
+gpat_gridhis -i cci_lc2015.tif -o patterns2015.grd -z 25 -f 25 -s cooc
+gpat_segment -i patterns2015.grd -o segments2015.tif -v segments2015.gpkg -m jsd -t 3
+gpat_segquality -i patterns2015.grd -s segments2015.tif -g inhomogeneity2015.tif -o isolation2015.tif
+```
 
 ---
 ### Segmentation - resources
@@ -845,7 +868,6 @@ Finally, we add identifiers of the new clusters to our spatial object containing
 knitr::include_graphics("figs/extend03b.png")
 ```
 
-
 The output is a map with motifels grouped into the areas of the similar land cover composition.
 Some of the clusters represent one dominant land cover category, e.g. cluster 1 is water, cluster 3 is shrubland, and cluster 7 is sparse vegetation.
 On the other hand, some of the clusters can consist of many land cover categories.
@@ -854,6 +876,19 @@ For example, cluster 6 is a mosaic of grassland and sparse vegetation and cluste
 ---
 ### Clustering - code
 
+```{bash, eval=FALSE}
+gpat_distmtx -i patterns2015.txt -o similarity2015.csv
+```
+
+```{r, eval=FALSE}
+dist_2015 = gpat_read_distmtx("similarity2015.csv")
+hclust_result = hclust(d = dist_2015, method = "ward.D2")
+plot(hclust_result, labels = FALSE)
+rect.hclust(hclust_result, k = 12, border = "blue")
+hclust_cut = cutree(hclust_result, 12)
+my_grid$class = hclust_cut
+plot(my_grid["class"])
+```
 
 ---
 layout: false
@@ -986,7 +1021,7 @@ class: middle, center
 # Conclusions
 
 ---
-### Conclustions
+### Conclusions
 
 .pull-left[
 ```{r, out.width="375px", echo=FALSE}
@@ -1005,7 +1040,7 @@ The results showed a dependence of land cover spatial configuration on two param
 ]
 
 ---
-### Conclustions
+### Conclusions
 
 - The pattern-based spatial analysis uses **blocks of pixels (motifels)** to represent a local pattern
 - This way **a large number of small simple cells are transformed into a smaller number of large complex cells**
