@@ -1,0 +1,97 @@
+---
+title: "GeoPAT 2"
+subtitle: "analysis of spatial and temporal patterns"
+author: "Jakub Nowosad"
+date: "2018-08-22 (updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+          css: ["my_theme.css", "default"]
+          lib_dir: libs
+          nature:
+                  highlightStyle: github
+                  highlightLines: true
+                  countIncrementalSlides: false
+                  ratio: 16:9
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+---
+layout: false
+class: middle, center
+
+## Introduction
+
+---
+layout: false
+class: middle, center
+
+## Core ideas
+
+---
+layout: false
+class: middle, center
+
+## Search
+
+---
+layout: false
+class: middle, center
+
+## Compare
+
+---
+layout: false
+class: middle, center
+
+## Segmentation
+
+---
+layout: false
+class: middle, center
+
+## Clustering
+
+---
+layout: false
+class: middle, center
+
+## Extendibility
+
+---
+layout: false
+class: middle, center
+
+## Conclusions
+
+---
+layout: false
+class: reverse, middle, center
+
+```{r, include=FALSE, eval=FALSE}
+devtools::install_github("ropenscilabs/icon")
+```
+
+## Thank you
+
+.pull-left[
+## Me:
+
+Twitter: `r icon::ii_social_twitter()` jakub_nowosad
+
+Email: nowosad.jakub@gmail.com
+]
+
+.pull-right[
+## Resources:
+
+https://nowosad.github.io
+
+http://sil.uc.edu
+]
+
+.footnote[
+**Slides:** https://github.com/Nowosad/geostat18
+]
