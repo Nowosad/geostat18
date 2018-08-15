@@ -16,18 +16,19 @@ output:
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
+# knitr::opts_chunk$set(eval = FALSE)
 ```
 
 layout: false
 class: middle, center
 
-## Introduction
+# Introduction
 
 ---
 layout: false
 class: middle, center
 
-## Core ideas
+# Core ideas
 
 ---
 ### Motifel
@@ -165,37 +166,202 @@ knitr::include_graphics("figs/03_motifel_signatures.png")
 layout: false
 class: middle, center
 
-## Search
+# Installation
 
 ---
 layout: false
 class: middle, center
 
-## Compare
+# Datasets
+
 
 ---
 layout: false
 class: middle, center
 
-## Segmentation
+# Search
+
+---
+### Search
+
+- Nowadays, convenient search engines (such as [Google](https://www.google.com/) or [DuckDuckGo](https://duckduckgo.com/)) are essential tools in everyday life. 
+We check the news, look for the products reviews, or find the way [how to make solar eclipse glasses](https://trends.google.com/trends/yis/2017/GLOBAL/).
+Most of our searches have one thing in common though - they are based on text phrases.
+Additionally, some less common search methods are possible, including [reverse image search](https://support.google.com/websearch/answer/1325808).
+
+- Spatial data analysis also offers several distinct ways to search. 
+Some only depends on [values in a vector's attribute table](http://geocompr.robinlovelace.net/attr.html#vector-attribute-subsetting) or [raster's values](http://geocompr.robinlovelace.net/attr.html#raster-subsetting). 
+There are also methods that search based on spatial properties of the data, for example, how [an object relate in space to another one](http://geocompr.robinlovelace.net/spatial-operations.html#spatial-subsetting).
+You can look for intersections, touches, is within, etc.
+Finally, it is possible to search by distance.
+
+---
+### Search
+
+Can you guess what are we missing in this long list?
+Yes, you're (probably) right!
+Finding places with similar spatial patterns is not a standard spatial operation.
+However, it could be useful to solve many potential questions.
+For example, you observed some ecological process and assume that it depends on a pattern of land cover.
+Next, you need to find and study areas of similar land cover patterns to validate your results.
+Fortunately, finding similar spatial patterns is one of the GeoPAT 2 main features.
+
+It consists of three steps:
+
+1. Extracting local pattern features of a query (location of interest).
+2. Creating a grid of motifels.
+3. Comparing a query and a grid of motifels.
+
+---
+### Search
+
+- Spatial pattern search requires just two things - a query (location of interest) and a context (the same data of a larger area).
+In this example, we use a 6 by 6 km site in Pilliga Forests in New South Wales, Australia as our location of interest.
+
+- This area is mostly occupied by evergreen and deciduous broad-leaved forest, but also has a few smaller patches of shrublands.
+
+.right-column2[
+```{r, echo=FALSE, fig.cap="LALA", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/search01.png")
+```
+]
+
+---
+### Search - step 1
+
+- In the first step, we need to convert this map (spatial patterns of categories) into a numerical **signature** (read [the previous blog post](/post/pattern-based-spatial-analysis-core-ideas) to learn more about **signatures**) using the `gpat_pointshis` module.
+It requires a number of parameters:
+
+- `-i` - an input map covering the whole area that we want to be searched
+- `-o` - a name of the output text file containing **a signature** of the query
+- `-s` - a representation of the query (a type of **signature**)
+- `-x` and `-y` - x and y coordinates of the query (alternatively, a file with coordinates can be provided with `--xy_file=<file_name>`)
+- `-z` - a size of the query in pixels
+
+```{bash, eval = FALSE}
+gpat_pointshis -i cci_lc2015.tif -o query_signature.txt -s cooc -x 1457570 -y -3562186 -z 20
+```
+
+- In this example, a land cover dataset with a resolution of 300 meters and covering Australia is our input map.
+We selected the spatial co-occurrence of categories (`cooc`) as a type of **signature** because we are interested not only in a composition of land cover classes but also in its pattern.
+The last parameters determine coordinates of a central point (`-x 1457570 -y -3562186`) and the size of a query (`-z 20`). 
+In other words, the area of interest is a rectangle of 6000 by 6000 meters (20 pixels x map resolution of 300 meters) with the above coordinates in the middle.
+
+---
+### Search - step 2
+
+.left-column2[
+```{r, echo=FALSE, fig.cap="LALA", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/australia_ccilc.png")
+```
+]
+
+.right-column2[
+In the second step, we create a grid of motifels - a database of patterns for the area of Australia.
+
+Using the `gpat_gridhis` module, we need to provide:
+
+- `-i` - an input map covering the whole area that we want to be searched
+- `-o` - a name of the output file containing signatures of each landscape in the input map (a grid of motifels)
+- `-s` - a representation of the query (a type of **signature**)
+- `-z` and `-f` - a size of the landscapes from which signatures will be extracted
+
+```{bash, eval = FALSE}
+gpat_gridhis -i cci_lc2015.tif -o reference.grd -s cooc -z 20 -f 20
+```
+]
+
+---
+### Search - step 3
+
+- Finally, we compare pattern in our query (step 1) with every local 6 by 6 km patterns on the whole continent (step 2).
+Therefore, only four parameters are required by `gpat_search`:
+
+- `-i` - a grid of motifels
+- `-o` - a final map of similarity between `-i` and `-r`
+- `-r` - a text file with a numerical **signature** of our query
+- `-m` - a selected [**similarity metric**](read [the previous blog post](/post/pattern-based-spatial-analysis-core-ideas) to learn more about **similarity metrics**)
+
+```{bash, eval = FALSE}
+gpat_search -i reference.grd -o similarity_output -r query_signature.txt -m jsd
+```
+
+---
+### Search
+
+.left-column2[
+- The output map is a raster of similarity between our query and the reference map.
+
+- Most of the reference map's area is very different than our query (low values of similarity indicated by dark colors).
+However, there is also a visible number of places with a very similar local pattern. 
+They are located in the south-west and east Australia and on Tasmania.
+]
+
+.right-column2[
+```{r, echo=FALSE, fig.cap="Similarity of land cover patterns between the query and the reference map", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/search03.png")
+```
+]
+
+---
+### Search
+
+- Finally, we can just use standard GIS methods and extract areas with the most similar land cover pattern to our query.
+
+- They do not only have the same land cover classes, but also its composition and configuration are very similar.
+
+```{r, echo=FALSE, fig.cap="The query and six the most similar local landscapes to it", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/search04.png")
+```
+
+---
+### Search
+
+```{bash, eval=FALSE}
+gpat_pointshis -i cci_lc2015.tif -o query_signature.txt -s cooc -x 1457570 -y -3562186 -z 20
+gpat_gridhis -i cci_lc2015.tif -o reference.grd -s cooc -z 20 -f 20
+gpat_search -i reference.grd -o similarity_output -r query_signature.txt -m jsd
+```
+
+---
+### Search - resources
+
+<!--webapp-->
+
+---
+### Search - resources
+
+<!--papers??-->
 
 ---
 layout: false
 class: middle, center
 
-## Clustering
+# Compare
 
 ---
 layout: false
 class: middle, center
 
-## Extendibility
+# Segmentation
 
 ---
 layout: false
 class: middle, center
 
-## Conclusions
+# Clustering
+
+---
+layout: false
+class: middle, center
+
+# Extendibility
+
+---
+layout: false
+class: middle, center
+
+# Conclusions
 
 ---
 layout: false
