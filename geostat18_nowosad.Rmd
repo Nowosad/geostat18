@@ -466,6 +466,185 @@ class: middle, center
 # Segmentation
 
 ---
+### Segmentation
+
+- Spatial patterns are an underexplored venue of the Earth and ecological sciences. They could be both an effect of some processes and at the same time affect other ones. For example, a land cover pattern (spatial arrangement of land cover categories) could exist because of an impact of a terrain topology, soils, climate, or human action. Next, this pattern can influence abiotic (e.g. some land cover patterns can be better to prevent erosion and flood than others) and biotic (e.g. some land cover patterns creates habitats for certain animals) components.
+
+- Although patterns are sometimes easy to see on a map, their delineation is difficult. Probably the most crucial obstacle is the undefinability of patterns’ borders. There is not a ground truth that enables you to validate which areas have a homogenous pattern and where the line between two patterns should be drawn. Moreover, several practical problems exist - manual delineation of patterns is inconsistent, very often bias and hardly reproducible as different people have different definitions of patterns in their minds. On top of that there is an issue of time - how long would it take to create a detailed pattern-based regionalization on a global scale?
+
+---
+### Segmentation
+
+GeoPAT 2 provides a fast, consistent, but also a highly customizable way to regionalize space based on the underlining spatial patterns.
+It also has methods to analyze the quality of the output regionalization.
+The pattern-based segmentation process consists of three steps:
+
+1. Creating a grid of motifels.
+2. Regionalizing of homogeneous patterns.
+3. Obtaining quality of the segmentation.
+
+```{r, echo=FALSE, fig.cap="LALA", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/segmentation00.png")
+```
+
+---
+### Segmentation - step 1
+
+In the first step, we need to create a grid of motifels.
+
+```{bash, eval = FALSE}
+gpat_gridhis -i cci_lc2015.tif -o patterns2015.grd -z 25 -f 25 -s cooc 
+```
+
+The `patterns2015.grd` grid contains a large number of [motifels](/post/pattern-based-spatial-analysis-core-ideas/#motiel) that are represented by the spatial coocurrence of categories.
+Motifels are rectangles of 7,500 by 7,500 meters (`-z 25`: 25 pixels x map resolution of 300 meters) covering the whole area of Australia. 
+However, you need to keep in mind that they are going to be converted into "brick" blocks of 15,000 by 15,000 meters in the segmentation step.
+More about the "brick" topology in a moment...
+
+---
+### Segmentation - step 2
+
+The second step is to create regions of homogeneous patterns using the output of the first step.
+Segmentation result depends on several parameters:
+
+- `-i` - an input grid of motifels (output from the first step)
+- `-o` - a name of the output GeoTIFF file - the result in a raster format
+- `-v` - a name of the output GeoPackage file - the result in a vector format
+- `-m` - selected [**similarity metric**](read [the previous blog post](/post/pattern-based-spatial-analysis-core-ideas) to learn more about **similarity metrics**)
+- `--lthreshold` - minimum distance threshold to build areas (see the examples below). It controls segments' sizes
+- `--uthreshold` - maximum distance threshold to build areas (see the examples below). It prevents the growth of
+inhomogeneous segments
+- `--swap` - improve segmentation by swapping unmatched areas. 0 forces repetition until all unmatched segments will be swapped, while 1 skip this process
+- `--minarea` - suppress creation of segments smaller than the set value
+- `--maxhist` - decide how many neighbors are used to calculate similarity. When 0 is set it uses all of the neighbors, which can be time-consuming
+- `-q` - set the root topology instead of the brick topology (see the examples below)
+- `-t` - segmentation can be a computationally demanding process. This option allows using multiple CPU threads
+
+Additional parameters are either experimental (`--weights`) or are used mostly for diagnostics purposes (`-g`, `-r`).
+Before digging deep into the parameters, let's try and leave the default values of most of them:
+
+```{bash, eval = FALSE}
+# example A
+gpat_segment -i patterns2015.grd -o segments2015.tif -v segments2015.gpkg -m jsd -t 3
+```
+
+---
+### Segmentation - step 2
+
+Using only three CPU threads, this process should take about four minutes on a modern laptop for the whole area of Australia.
+The result of the pattern-based segmentation consists of a large number of regions of varied size.
+Some of them are relatively small (one motifel) - they are different from the surrounding, while others span over large areas.
+To make it easier to see how segmentation works, let's focus on the area in north-eastern Australia defined by the red rectangle:
+
+```{r, echo=FALSE, fig.cap="LALA", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/segmentation01.png")
+```
+
+---
+### Segmentation - step 2
+
+ne of the most important concepts here is the way how motifels are created.
+Segmentation differs in this element from the rest of the spatial pattern-based analysis, as it uses so-called "brick topology".
+Before the segmentation process can even start, grid created in the first step is transformed into a set "bricks" consisting of four motifels that are laid in alternate layers (see the figure below).
+Therefore, when you set the size to 25 in the first step, the segmented motifels would have a size of 50 by 50 cells (four motifels of 25 by 25).
+The "brick" topology allows creating segments using 6-connectivity, which gives better results than a simple 4-connectivity.
+
+```{r, echo=FALSE, fig.cap="Segmentation output on the top of a land cover map for an area in north-eastern Australia", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/segmentation02a.png")
+```
+
+---
+### Segmentation - step 2
+
+Segmentation process consists of several steps that are explained in the ["Multi-scale segmentation algorithm for pattern-based partitioning of large categorical rasters"](https://eartharxiv.org/smva7/) article.
+However, the most basic part to understand is how the segment growing works.
+We start from one motifel and calculate its similarity with all of the adjacent motifels.
+Next, we merge it with the most similar one and this process is repeated until we get to the threshold value:
+
+```{r, echo=FALSE, fig.cap="Illustration of the segment growing process", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/segmentation03.png")
+```
+
+---
+### Segmentation - step 3
+
+As I have mentioned in the introduction, ground truth does not exist in the pattern-based regionalization. 
+However, we can measure several properties of the output segments and they could give us an insight into how good our results are.
+All of them have values between 0 and 1.
+The most important first-order property is inhomogeneity, which tells how internally inconsistent each segment is.
+Our main goal of segmentation is to obtain regions of homogeneous patterns, therefore we want this value to be as low as possible. 
+
+```{r, echo=FALSE, fig.cap="Inhomogeneity of the example segmentation", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/segmentation04a.png")
+```
+
+---
+### Segmentation - step 3
+
+Secondary property of segmentation is isolation - we want regions that are distinct from their surroundings and therefore we aim for high values of isolation.
+However, you need to keep in mind that inhomogeneity and isolation are not equally important. 
+You may want to obtain regions of homogeneous patterns that are not drastically isolated from surroundings, however isolated yet inhomogenous regions are usually meaningless.
+
+```{r, echo=FALSE, fig.cap="Isolation of the example segmentation", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/segmentation04b.png")
+```
+
+---
+### Segmentation - step 3
+
+Finally, segmentation quality can be calculated as:
+
+$$1 - (inhomogeneity/isolation)$$
+
+It gives an overall metric of the output, where the larger the value the better.
+
+```{r, echo=FALSE, fig.cap="Quality of the example segmentation", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/segmentation04c.png")
+```
+
+---
+### Segmentation control
+
+Pattern-based segmentation is a complex operation and visibly depends on several parameters mentioned above.
+Let's try to manipulate some of them and see the results:
+
+```{bash, eval = FALSE}
+# example B
+gpat_segment -i patterns2015.grd -o segments2015_B.tif -v segments2015_B.gpkg -m jsd -t 3 --lthreshold=0.3 --uthreshold=0.5
+# example C
+gpat_segment -i patterns2015.grd -o segments2015_C.tif -v segments2015_C.gpkg -m jsd -t 3 --minarea=6
+# example D
+gpat_segment -i patterns2015.grd -o segments2015_D.tif -v segments2015_D.gpkg -m jac -t 3
+# example E
+gpat_gridhis -i cci_lc2015.tif -o patterns2015_100.grd -s cooc -z 100 -f 100
+gpat_segment -i patterns2015_100.grd -o segments2015_E.tif -v segments2015_E.gpkg -m jsd -t 3 -q
+```
+
+---
+### Segmentation control
+
+```{r, echo=FALSE, fig.cap="Five examples of segmentation with a different set of parameters", out.width=500, fig.align='center'}
+knitr::include_graphics("figs/segmentation05.png")
+```
+
+Example A uses the default values of the segmentation.
+In the second example (B), we increased values of two parameters, `--lthreshold` and `--uthreshold`.
+The first controls how homogenous the output regions should be in terms of patterns, with larger values indicating more inhomogenous regions (which also means larger regions/smaller number of segments).
+The second one prevents the growth of too large inhomogeneous segments.
+Example C has the `--minarea` parameter set to 6, which suppress creation of segments with fewer motifels than the set number.
+In example D, we used Jaccard distance, a different similarity measure. 
+It gave fairly similar results to the Janson-Shannon divergence but different in details.
+And finally, example E used a root topology (also know as 4-connectivity). 
+In the growing stage, it can only use neighbors from the left, right, top, and bottom.
+As a result, the output segmentation seems more clunky and the segments are aligned along horizontal and vertical lines.
+
+---
+### Segmentation - resources
+
+---
+### Segmentation - resources
+
+---
 layout: false
 class: middle, center
 
