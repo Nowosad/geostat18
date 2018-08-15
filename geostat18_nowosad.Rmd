@@ -25,15 +25,47 @@ class: middle, center
 # Introduction
 
 ---
-### Introduction
+### Analysis of large spatial datasets
 
+.left-column2[
+```{r, out.width="350px", echo=FALSE}
+knitr::include_graphics("figs/south_america.png")
+```
+]
+.right-column2[
+```{r, out.width="375px", echo=FALSE}
+knitr::include_graphics("figs/south_america_sel.png")
+```
+- High resolution spatial data at local scale **do not provide information about global properties**
+- To understand global character of large spatial datasets, they need to be **analyzed in their entirety**
+- It is possible with **the Pattern-Based Spatial Analysis**
+]
 
 ---
-### Introduction
+### Pattern-Based Spatial Analysis
 
+The core idea it to **transform data from a large number of cells having simple content (one value) to a much smaller number of blocks with complex content**.
+In other words, decreasing a spatial resolution while increasing thematic resolution.
+
+Many **numerical signatures** (e.g. Cartesian product, co-occurrence histogram, landscape indices vector) could represent the complex content.
+It is also possible to measure distances between complex contents using **dissimilarity measures** (e.g. JSD, Euclidean distance).  
+
+This approach enables a group of analysis to be performed on the grid of complex cells (local patterns):
+- **Search** - search for areas similar to a query
+- **Change detection** - comparison of local patterns between two maps
+- **Segmentation** - division of a map into regions of cohesive patterns
+- **Clustering** - grouping patterns that are similar to each other
+
+```{r, out.width="1200px", echo=FALSE}
+knitr::include_graphics("figs/geopat2_four_types.png")
+```
 
 ---
-### Introduction
+### GeoPAT 2
+
+```{r, echo=FALSE, fig.cap="Command-line interface of GeoPAT 2", out.width=800, fig.align='center'}
+knitr::include_graphics("figs/cli.png")
+```
 
 ---
 layout: false
