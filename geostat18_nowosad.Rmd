@@ -384,7 +384,7 @@ knitr::include_graphics("figs/search01.png")
 ---
 ### Search - step 1
 
-In the first step, we need to convert this map (spatial patterns of categories) into a numerical **signature** to learn more about **signatures**) using the `gpat_pointshis` module.
+In the first step, we need to convert this map (spatial patterns of categories) into a numerical **signature**  using the `gpat_pointshis` module.
 It requires a number of parameters:
 
 * `-i` - an input map covering the whole area that we want to be searched
@@ -397,9 +397,10 @@ It requires a number of parameters:
 gpat_pointshis -i cci_lc2015.tif -o query_signature.txt -s cooc -x 1457570 -y -3562186 -z 20
 ```
 
-In this example, a land cover dataset with a resolution of 300 meters and covering Australia is our input map.
-We selected the spatial co-occurrence of categories (`cooc`) as a type of **signature** because we are interested not only in a composition of land cover classes but also in its pattern.
-The last parameters determine coordinates of a central point (`-x 1457570 -y -3562186`) and the size of a query (`-z 20`). 
+In this example:
+- A land cover dataset with a resolution of 300 meters and covering Australia is our input map.
+- We selected the spatial co-occurrence of categories (`cooc`) as a type of **signature** because we are interested not only in a composition of land cover classes but also in its pattern.
+- The last parameters determine coordinates of a central point (`-x 1457570 -y -3562186`) and the size of a query (`-z 20`). 
 In other words, the area of interest is a rectangle of 6000 by 6000 meters (20 pixels x map resolution of 300 meters) with the above coordinates in the middle.
 
 ---
@@ -435,7 +436,7 @@ Therefore, only four parameters are required by `gpat_search`:
 * `-i` - a grid of motifels
 * `-o` - a final map of similarity between `-i` and `-r`
 * `-r` - a text file with a numerical **signature** of our query
-* `-m` - a selected [**similarity metric**](read [the previous blog post](/post/pattern-based-spatial-analysis-core-ideas) to learn more about **similarity metrics**)
+* `-m` - a selected **similarity metric**
 
 ```{bash, eval = FALSE}
 gpat_search -i reference.grd -o similarity_output -r query_signature.txt -m jsd
@@ -447,13 +448,13 @@ gpat_search -i reference.grd -o similarity_output -r query_signature.txt -m jsd
 .left-column2[
 - The output map is a raster of similarity between our query and the reference map.
 
-- Most of the reference map's area is very different than our query (low values of similarity indicated by dark colors).
-However, there is also a visible number of places with a very similar local pattern. 
-They are located in the south-west and east Australia and on Tasmania.
+<!-- - Most of the reference map's area is very different than our query (low values of similarity indicated by dark colors). -->
+<!-- However, there is also a visible number of places with a very similar local pattern.  -->
+<!-- They are located in the south-west and east Australia and on Tasmania. -->
 ]
 
 .right-column2[
-```{r, echo=FALSE, fig.cap="Similarity of land cover patterns between the query and the reference map", out.width=700, fig.align='center'}
+```{r, echo=FALSE, fig.cap="Similarity of land cover patterns between the query and the reference map", out.width=650, fig.align='center'}
 knitr::include_graphics("figs/search03.png")
 ```
 ]
@@ -462,10 +463,9 @@ knitr::include_graphics("figs/search03.png")
 ### Search
 
 - Finally, we can just use standard GIS methods and extract areas with the most similar land cover pattern to our query.
-
 - They do not only have the same land cover classes, but also its composition and configuration are very similar.
 
-```{r, echo=FALSE, fig.cap="The query and six the most similar local landscapes to it", out.width=600, fig.align='center'}
+```{r, echo=FALSE, fig.cap="The query and six the most similar local landscapes to it", out.width=625, fig.align='center'}
 knitr::include_graphics("figs/search04.png")
 ```
 
@@ -473,13 +473,16 @@ knitr::include_graphics("figs/search04.png")
 ### Search - code
 
 <!-- explain -->
-1. Extracting local pattern features of a query (location of interest).
-2. Creating a grid of motifels.
-3. Comparing a query and a grid of motifels.
-
+Step 1. Extracting local pattern features of a query (location of interest).
 ```{bash, eval=FALSE}
 gpat_pointshis -i cci_lc2015.tif -o query_signature.txt -s cooc -x 1457570 -y -3562186 -z 20
+```
+Step 2. Creating a grid of motifels.
+```{bash, eval=FALSE}
 gpat_gridhis -i cci_lc2015.tif -o reference.grd -s cooc -z 20 -f 20
+```
+Step 3. Comparing a query and a grid of motifels.
+```{bash, eval=FALSE}
 gpat_search -i reference.grd -o similarity_output -r query_signature.txt -m jsd
 ```
 
