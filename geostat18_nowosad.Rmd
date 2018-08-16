@@ -63,14 +63,14 @@ knitr::include_graphics("figs/geopat2_four_types.png")
 ---
 ### GeoPAT 2
 
-**GeoPAT 2 (Geospatial Pattern Analysis Toolbox)** is a standalone suite of modules written in C and dedicated to the analysis of large Earth Science datasets in their entirety using spatial and/or temporal patterns. 
-Global scale, high-resolution spatial datasets are available but are mostly used in small pieces for local studies. 
-GeoPAT enables studying them in their entirety.
-GeoPAT’s core idea is to tessellate global spatial data into a grid of square blocks of original cells (pixels).
-This transforms data from its original form (huge number of cells each having simple content) to a new form (much smaller number of supercells/blocks with complex content).
-Complex cell contains a pattern of original variable.
-GeoPAT provides means for a succinct description of such patterns and for calculation of similarity between patterns.
-This enables spatial analysis such as search, change detection, segmentation, and clustering to be performed on the grid of complex cells (local patterns).
+- **GeoPAT 2 (Geospatial Pattern Analysis Toolbox)** is a standalone suite of modules written in C. - Dedicated to the analysis of large Earth Science datasets in their entirety using spatial and/or temporal patterns.
+<!-- Global scale, high-resolution spatial datasets are available but are mostly used in small pieces for local studies.  -->
+<!-- GeoPAT enables studying them in their entirety. -->
+- GeoPAT’s core idea is to tessellate global spatial data into a grid of square blocks of original cells (pixels).
+- This transforms data from its original form (huge number of cells each having simple content) to a new form (much smaller number of supercells/blocks with complex content).
+- Complex cell contains a pattern of original variable.
+- GeoPAT provides means for a succinct description of such patterns and for calculation of similarity between patterns.
+- This enables spatial analysis such as search, change detection, segmentation, and clustering to be performed on the grid of complex cells (local patterns).
 
 ```{r, echo=FALSE, fig.cap="Command-line interface of GeoPAT 2", out.width=800, fig.align='center'}
 knitr::include_graphics("figs/cli.png")
@@ -84,23 +84,23 @@ Five modules are designed for extracting pattern signatures from an original dat
 
 The role of signature extraction modules is to calculate pattern signatures for scenes defined:
 
-- `gpat_gridhis` - by a neighborhood of each cell in a grid (spatial pattern)
-- `gpat_gridts` - by a neighborhood of each cell in a grid (spatiotemporal pattern)
-- `gpat_pointshis` - in the neighborhoods of selected points (spatial pattern)
-- `gpat_pointsts` - in the neighborhoods of selected points (spatiotemporal pattern)
-- `gpat_polygon` - over irregular polygons
+- `gpat_gridhis`    - by a neighborhood of each cell in a grid (spatial pattern)
+- `gpat_gridts`     - by a neighborhood of each cell in a grid (spatiotemporal pattern)
+- `gpat_pointshis`  - in the neighborhoods of selected points (spatial pattern)
+- `gpat_pointsts`   - in the neighborhoods of selected points (spatiotemporal pattern)
+- `gpat_polygon`    - over irregular polygons
 
 The role of geoprocessing modules is to perform:
 
-- `gpat_search` - searching
-- `gpat_compare` - comparision
-- `gpat_segment` - segmentation
-- `gpat_distmtx` - clustering
+- `gpat_search`     - searching
+- `gpat_compare`    - comparision
+- `gpat_segment`    - segmentation
+- `gpat_distmtx`    - clustering
 
 The role of utility modules is to:
 
-- `gpat_grid2txt` - convert grid of signatures (grid-of-scenes) from a binary to text
-- `gpat_globnorm` - normalization of grid of signatures (grid-of-scenes) values
+- `gpat_grid2txt`   - convert grid of signatures (grid-of-scenes) from a binary to text
+- `gpat_globnorm`   - normalization of grid of signatures (grid-of-scenes) values
 - `gpat_segquality` - calculate the quality metrics (inhomogeneity and isolation) of a segmentation
 
 ---
@@ -123,9 +123,9 @@ knitr::include_graphics("figs/01_motifel_grid.png")
 ```
 
 ---
-### Motifel
+### Motifel - size
 
-It is worth to mention that a simple rule to decide on a size of a motifel doesn’t exist. The decision depends on the input data (e.g. its resolution, number of classes), type of a pattern, its variability, etc. However, a rule of thumb is to look closely at your data and keep in mind two things:
+A simple rule to decide on a size of a motifel doesn’t exist. The decision depends on the input data (e.g. its resolution, number of classes), type of a pattern, its variability, etc. However, a rule of thumb is to look closely at your data and keep in mind two things:
 
 1. There should be enough pixels to create a pattern. That is why GeoPAT 2 does not allow for a mofitels smaller than 10 by 10 pixels.
 2. Single motifels usually should not encapsulate many different patterns.
@@ -138,9 +138,9 @@ knitr::include_graphics("figs/01_motifel_grid.png")
 ### Signature
 
 .pull-left[
-- **Motifel** is a spatial data representation preferable by humans as our pattern processing capabilities were improved in millions of years of evolution.
+- **Motifel** is a spatial data representation preferable by humans. <!--as our pattern processing capabilities were improved in millions of years of evolution.-->
 - However, computers cannot see patterns in the same way as we do, and we need to transform the spatial pattern data into a form recognizable by machines.
-- Fortunately, there are many ways to do so and GeoPAT 2 offers some of them.
+- **GeoPAT 2** offers some of ways to do so.
 They are called **signatures**.
 ]
 
@@ -153,23 +153,23 @@ knitr::include_graphics("figs/02_signatures_examples0.png")
 ---
 ### Signature
 
-```{r, echo=FALSE, out.width=500, fig.align='center'}
+```{r, echo=FALSE, out.width=700, fig.align='center'}
 knitr::include_graphics("figs/02_signatures_examples.png")
 ```
 
 - The simplest **signature** of a motifel is its composition (Cartesian product, `prod`) - a number of cells of each map category.
 It is a very compact representation, although it doesn't contain information related to the configuration of categories.
 - This is a role for the following **signature** - spatial co-occurrence of categories (`cooc`).
-Spatial co-occurrence of categories is a $k$ by $k$ square matrix, where $k$ is a number of classes in a landscape.
-Class co-occurrence matrix counts a number of pairs of classes assigned to neighboring cells.
-Next, the co-occurrence matrix is transformed into a normalized co-occurrence histogram.
-In this **signature**, a landscape with $k$ classes can be represented by the co-occurrence histogram of $(k^2 + k)/2$ elements.
-Importantly, a $k$ number of them is related to the class composition and $(k^2 - k)/2$ is related to the class configuration.
+<!-- Spatial co-occurrence of categories is a $k$ by $k$ square matrix, where $k$ is a number of classes in a landscape. -->
+<!-- Class co-occurrence matrix counts a number of pairs of classes assigned to neighboring cells. -->
+<!-- Next, the co-occurrence matrix is transformed into a normalized co-occurrence histogram. -->
+<!-- In this **signature**, a landscape with $k$ classes can be represented by the co-occurrence histogram of $(k^2 + k)/2$ elements. -->
+<!-- Importantly, a $k$ number of them is related to the class composition and $(k^2 - k)/2$ is related to the class configuration. -->
 
 ---
 ### Signature
 
-```{r, echo=FALSE, out.width=500, fig.align='center'}
+```{r, echo=FALSE, out.width=700, fig.align='center'}
 knitr::include_graphics("figs/02_signatures_examples.png")
 ```
 
@@ -178,7 +178,7 @@ The first one shows that each land cover category occupies a very similar propor
 The second one provides more information - it counts how often different categories are adjacent to each other.
 These histograms also have some important properties - rotated or mirrored version of a landscape will still have the same non-spatial representation.-->
 
-- The **signatures** mentioned above are suitable for a numeric comparison between **motifels** using **similarity metrics** (more about them below).
+- The **signatures** mentioned above are suitable for a numeric comparison between **motifels** using **similarity metrics**.
 - There are three additionals **signatures** - "landscape indices" (`lind`), "selected landscape indices" (`linds`), and "Shannon entropy" (`ent`), and their role is mostly limited to describing motifels.
 
 ---
@@ -193,9 +193,9 @@ knitr::include_graphics("figs/03_motifel_signatures.png")
 .pull-right[
 - Two of the **signatures** mentioned above, `prod` and `cooc`, have a special power - they allow for comparisons between any pair of motifels. 
 <!-- In a similar way, as a human can look at two images and decide if they are similar or not, GeoPAT 2 can take two motifels and compare their **signatures**.  -->
-- It also has important advantages comparing to a human perception. 
-- Firstly, the GeoPAT 2 results are consistent and reproducible, while human perception can be erratic and differs between individuals.
-- Secondly, GeoPAT 2 gives a numerical value of similarity between two motifels.
+- It also has important advantages comparing to a human perception:
+    - Firstly, the GeoPAT 2 results are consistent and reproducible, while human perception can be erratic and differs between individuals.
+    - Secondly, GeoPAT 2 gives a numerical value of similarity between two motifels.
 ]
 
 ---
@@ -218,6 +218,12 @@ knitr::include_graphics("figs/03_motifel_signatures.png")
 ### Similarity metric
 
 .pull-left[
+```{r, echo=FALSE, out.width=500, fig.align='center'}
+knitr::include_graphics("figs/03_motifel_signatures.png")
+```
+]
+
+.pull-right[
 ```{r, echo=FALSE, warning=FALSE}
 jsd_result = structure(list(V1 = c(0, 0.114750416014047, 0.00293772511887314),
                             V2 = c(0.114750416014047, 0, 0.089399714585066),
@@ -238,11 +244,7 @@ knitr::kable(jsd_result,
 It has an additional land cover category ("grassland"), different proportions of land cover categories and their configurations.
 ]
 
-.pull-right[
-```{r, echo=FALSE, out.width=500, fig.align='center'}
-knitr::include_graphics("figs/03_motifel_signatures.png")
-```
-]
+
 
 ---
 layout: false
@@ -288,6 +290,10 @@ Some examples also use **rgeopat2** - [an R package with additional functions fo
 
 ```{r, eval=FALSE}
 install.packages("rgeopat2")
+```
+
+```{r, echo=FALSE, out.width=800, fig.align='center'}
+knitr::include_graphics("figs/rgeopat2.png")
 ```
 
 ---
