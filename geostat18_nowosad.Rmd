@@ -673,9 +673,25 @@ class: middle, center
 ---
 ### Segmentation
 
-- Spatial patterns are an underexplored venue of the Earth and ecological sciences. They could be both an effect of some processes and at the same time affect other ones. For example, a land cover pattern (spatial arrangement of land cover categories) could exist because of an impact of a terrain topology, soils, climate, or human action. Next, this pattern can influence abiotic (e.g. some land cover patterns can be better to prevent erosion and flood than others) and biotic (e.g. some land cover patterns creates habitats for certain animals) components.
+- Spatial patterns are an underexplored venue of the Earth and ecological sciences. They could be both an effect of some processes and at the same time affect other ones. 
+- For example, a land cover pattern (spatial arrangement of land cover categories) could exist because of an impact of a terrain topology, soils, climate, or human action. 
+- Next, this pattern can influence abiotic (e.g. some land cover patterns can be better to prevent erosion and flood than others) and biotic (e.g. some land cover patterns creates habitats for certain animals) components.
 
-- Although patterns are sometimes easy to see on a map, their delineation is difficult. Probably the most crucial obstacle is the undefinability of patterns’ borders. There is not a ground truth that enables you to validate which areas have a homogenous pattern and where the line between two patterns should be drawn. Moreover, several practical problems exist - manual delineation of patterns is inconsistent, very often bias and hardly reproducible as different people have different definitions of patterns in their minds. On top of that there is an issue of time - how long would it take to create a detailed pattern-based regionalization on a global scale?
+```{r, echo=FALSE, out.width=1100, fig.align='center'}
+knitr::include_graphics("figs/segment_example.png")
+```
+
+---
+### Segmentation
+
+- Although patterns are sometimes easy to see on a map, their delineation is difficult. 
+- Probably the most crucial obstacle is the undefinability of patterns’ borders. **There is not a ground truth that enables you to validate which areas have a homogenous pattern and where the line between two patterns should be drawn.**
+- Moreover, several practical problems exist - manual delineation of patterns is inconsistent, very often bias and hardly reproducible as different people have different definitions of patterns in their minds. 
+- On top of that there is an issue of time - how long would it take to create a detailed pattern-based regionalization on a global scale?
+
+```{r, echo=FALSE, out.width=1100, fig.align='center'}
+knitr::include_graphics("figs/segment_example.png")
+```
 
 ---
 ### Segmentation
@@ -689,7 +705,7 @@ The pattern-based segmentation process consists of three steps:
 3. Obtaining quality of the segmentation.]
 
 .right-column2[
-```{r, echo=FALSE, out.width=700, fig.align='center'}
+```{r, echo=FALSE, out.width=800, fig.align='center'}
 knitr::include_graphics("figs/segmentation00.png")
 ```
 ]
@@ -703,7 +719,7 @@ In the first step, we need to create a grid of motifels.
 gpat_gridhis -i cci_lc2015.tif -o patterns2015.grd -z 25 -f 25 -s cooc 
 ```
 
-- The `patterns2015.grd` grid contains a large number of [motifels](/post/pattern-based-spatial-analysis-core-ideas/#motiel) that are represented by the spatial coocurrence of categories.
+- The `patterns2015.grd` grid contains a large number of motifels that are represented by the spatial coocurrence of categories.
 - Motifels are rectangles of 7,500 by 7,500 meters (`-z 25`: 25 pixels x map resolution of 300 meters) covering the whole area of Australia. 
 - However, you need to keep in mind that they are going to be converted into "brick" blocks of 15,000 by 15,000 meters in the segmentation step.
 - More about the "brick" topology in a moment...
@@ -717,7 +733,7 @@ Segmentation result depends on several parameters:
 - `-i` - an input grid of motifels (output from the first step)
 - `-o` - a name of the output GeoTIFF file - the result in a raster format
 - `-v` - a name of the output GeoPackage file - the result in a vector format
-- `-m` - selected [**similarity metric**](read [the previous blog post](/post/pattern-based-spatial-analysis-core-ideas) to learn more about **similarity metrics**)
+- `-m` - selected similarity metric
 - `--lthreshold` - minimum distance threshold to build areas (see the examples below). It controls segments' sizes
 - `--uthreshold` - maximum distance threshold to build areas (see the examples below). It prevents the growth of
 inhomogeneous segments
@@ -741,7 +757,7 @@ gpat_segment -i patterns2015.grd -o segments2015.tif -v segments2015.gpkg -m jsd
 - Using only three CPU threads, this process should take about four minutes on a modern laptop for the whole area of Australia.
 - The result of the pattern-based segmentation consists of a large number of regions of varied size.
 Some of them are relatively small (one motifel) - they are different from the surrounding, while others span over large areas.
-- To make it easier to see how segmentation works, let's focus on the area in north-eastern Australia defined by the red rectangle:
+<!-- - To make it easier to see how segmentation works, let's focus on the area in north-eastern Australia defined by the red rectangle: -->
 ]
 
 .right-column2[
@@ -753,19 +769,23 @@ knitr::include_graphics("figs/segmentation01.png")
 ---
 ### Segmentation - step 2
 
-.left-column2[
-- One of the most important concepts here is the way how motifels are created.
-- Segmentation differs in this element from the rest of the spatial pattern-based analysis, as it uses so-called "brick topology".
-- Before the segmentation process can even start, grid created in the first step is transformed into a set "bricks" consisting of four motifels that are laid in alternate layers (see the figure below).
-- Therefore, when you set the size to 25 in the first step, the segmented motifels would have a size of 50 by 50 cells (four motifels of 25 by 25).
-- The "brick" topology allows creating segments using 6-connectivity, which gives better results than a simple 4-connectivity.
-]
-
-.right-column2[
-```{r, echo=FALSE, fig.cap="Segmentation output on the top of a land cover map for an area in north-eastern Australia", out.width=500, fig.align='center'}
+```{r, echo=FALSE, fig.cap="Segmentation output on the top of a land cover map for an area in north-eastern Australia", out.width=600, fig.align='center'}
 knitr::include_graphics("figs/segmentation02a.png")
 ```
-]
+
+---
+### Segmentation - step 2
+
+
+- One of the most important concepts here is the way how motifels are created.
+- Segmentation differs in this element from the rest of the spatial pattern-based analysis, as it uses so-called "brick topology".
+- Before the segmentation process can even start, **grid created in the first step is transformed into a set "bricks" consisting of four motifels that are laid in alternate layers** (see the figure below).
+- Therefore, when you set the size to 25 in the first step, the segmented motifels would have a size of 50 by 50 cells (four motifels of 25 by 25).
+- The "brick" topology allows creating segments using 6-connectivity, which gives better results than a simple 4-connectivity.
+
+```{r, echo=FALSE, out.width=900, fig.align='center'}
+knitr::include_graphics("figs/brick_topo.png")
+```
 
 ---
 ### Segmentation - step 2
@@ -776,59 +796,76 @@ However, the most basic part to understand is how the segment growing works.
 We start from one motifel and calculate its similarity with all of the adjacent motifels.
 Next, we merge it with the most similar one and this process is repeated until we get to the threshold value:
 
-```{r, echo=FALSE, fig.cap="Illustration of the segment growing process", out.width=800, fig.align='center'}
+```{r, echo=FALSE, fig.cap="Illustration of the segment growing process", out.width=1000, fig.align='center'}
 knitr::include_graphics("figs/segmentation03.png")
 ```
 
 ---
 ### Segmentation - step 3
 
-As I have mentioned in the introduction, ground truth does not exist in the pattern-based regionalization. 
+- Ground truth does not exist in the pattern-based regionalization. 
 However, we can measure several properties of the output segments and they could give us an insight into how good our results are.
+- All of the properties have values between 0 and 1.
 
 ```{bash, eval = FALSE}
 gpat_segquality -i patterns2015.grd -s segments2015.tif -g inhomogeneity2015.tif -o isolation2015.tif
 ```
 
-All of them have values between 0 and 1.
-The most important first-order property is inhomogeneity, which tells how internally inconsistent each segment is.
-Our main goal of segmentation is to obtain regions of homogeneous patterns, therefore we want this value to be as low as possible. 
+---
+### Segmentation - step 3
 
-```{r, echo=FALSE, fig.cap="Inhomogeneity of the example segmentation", out.width=500, fig.align='center'}
+.left-column2[
+- **The most important first-order property is inhomogeneity**, which tells how internally inconsistent each segment is.
+Our main goal of segmentation is to obtain regions of homogeneous patterns, therefore we want this value to be as low as possible. 
+]
+
+.right-column2[
+```{r, echo=FALSE, fig.cap="Inhomogeneity of the example segmentation", out.width=700, fig.align='center'}
 knitr::include_graphics("figs/segmentation04a.png")
 ```
+]
 
 ---
 ### Segmentation - step 3
 
-Secondary property of segmentation is isolation - we want regions that are distinct from their surroundings and therefore we aim for high values of isolation.
-However, you need to keep in mind that inhomogeneity and isolation are not equally important. 
+.left-column2[
+- **Secondary property of segmentation is isolation** - we want regions that are distinct from their surroundings and therefore we aim for high values of isolation.
+- However, you need to keep in mind that inhomogeneity and isolation are not equally important. 
 You may want to obtain regions of homogeneous patterns that are not drastically isolated from surroundings, however isolated yet inhomogenous regions are usually meaningless.
+]
 
-```{r, echo=FALSE, fig.cap="Isolation of the example segmentation", out.width=500, fig.align='center'}
+.right-column2[
+```{r, echo=FALSE, fig.cap="Isolation of the example segmentation", out.width=650, fig.align='center'}
 knitr::include_graphics("figs/segmentation04b.png")
 ```
+]
 
 ---
 ### Segmentation - step 3
 
-Finally, segmentation quality can be calculated as:
+.left-column2[
+- Finally, segmentation quality can be calculated as:
 
 $$1 - (inhomogeneity/isolation)$$
 
-It gives an overall metric of the output, where the larger the value the better.
+- It gives an overall metric of the output, where the larger the value the better.
+]
 
-```{r, echo=FALSE, fig.cap="Quality of the example segmentation", out.width=500, fig.align='center'}
+.right-column2[
+```{r, echo=FALSE, fig.cap="Quality of the example segmentation", out.width=650, fig.align='center'}
 knitr::include_graphics("figs/segmentation04c.png")
 ```
+]
 
 ---
 ### Segmentation control
 
-Pattern-based segmentation is a complex operation and visibly depends on several parameters mentioned above.
-Let's try to manipulate some of them and see the results:
+- Pattern-based segmentation is a complex operation and visibly depends on several parameters mentioned above.
+- Let's try to manipulate some of them and see the results:
 
 ```{bash, eval = FALSE}
+# example A 
+gpat_segment -i patterns2015.grd -o segments2015.tif -v segments2015.gpkg -m jsd -t 3
 # example B
 gpat_segment -i patterns2015.grd -o segments2015_B.tif -v segments2015_B.gpkg -m jsd -t 3
 --lthreshold=0.3 --uthreshold=0.5
@@ -845,7 +882,7 @@ gpat_segment -i patterns2015_100.grd -o segments2015_E.tif -v segments2015_E.gpk
 ---
 ### Segmentation control
 
-```{r, echo=FALSE, fig.cap="Five examples of segmentation with a different set of parameters", out.width=850, fig.align='center'}
+```{r, echo=FALSE, fig.cap="Five examples of segmentation with a different set of parameters", out.width=900, fig.align='center'}
 knitr::include_graphics("figs/segmentation05.png")
 ```
 
@@ -865,9 +902,18 @@ knitr::include_graphics("figs/segmentation05.png")
 
 <!-- explain -->
 
+Step 1. Creating a grid of motifels.
 ```{bash, eval = FALSE}
 gpat_gridhis -i cci_lc2015.tif -o patterns2015.grd -z 25 -f 25 -s cooc
+```
+
+Step 2. Regionalizing of homogeneous patterns.
+```{bash, eval = FALSE}
 gpat_segment -i patterns2015.grd -o segments2015.tif -v segments2015.gpkg -m jsd -t 3
+```
+
+Step 3. Obtaining quality of the segmentation.
+```{bash, eval = FALSE}
 gpat_segquality -i patterns2015.grd -s segments2015.tif -g inhomogeneity2015.tif -o isolation2015.tif
 ```
 
@@ -880,6 +926,8 @@ gpat_segquality -i patterns2015.grd -s segments2015.tif -g inhomogeneity2015.tif
 - **Niesterowicz, J. and Stepinski, T.F.**, 2017. *Pattern-based, multi-scale segmentation and regionalization of EOSD land cover*. International Journal of Applied Earth Observation and Geoinformation, 62, pp.192-200.
 - **Niesterowicz, J., Stepinski, T.F. and Jasiewicz, J.**, 2016. *Unsupervised regionalization of the United States into landscape pattern types*. International Journal of Geographical Information Science, 30(7), pp.1450-1468.
 - **Stepinski, T.F., Niesterowicz, J. and Jasiewicz, J.**, 2015. *Pattern-based regionalization of large geospatial datasets using complex object-based image analysis*. Procedia Computer Science, 51, pp.2168-2177.
+
+<!-- three images -->
 
 ---
 layout: false
