@@ -890,12 +890,16 @@ class: middle, center
 ---
 ### Clustering
 
-- You can also calculate similarity matrices between motifels, points, or polygons using `gpat_distmtx`. 
+<!-- - Segmentation merges the most similar local patterns and creates  -->
+<!-- - On the other hand, clustering... -->
+- **GeoPAT 2** calculates similarity matrices between motifels, points, or polygons using `gpat_distmtx`. 
 - It accepts outputs from `gpat_grid2txt`, `gpat_pointshis`, or `gpat_polygon` and returns a CSV file containing a similarity matrix - also known as a distance matrix.
-- Below, we focus on the output from `gpat_grid2txt`.
+- In this example, we focus on the output from `gpat_grid2txt`.
 - Read [the GeoPAT 2 manual](https://zenodo.org/record/1291123) to see examples of clustering based on the output of `gpat_pointshis` and `gpat_polygon`.
 
 ```{bash, eval=FALSE}
+gpat_gridhis -i cci_lc2015.tif -o patterns2015.grd -s prod -z 200 -f 200
+gpat_grid2txt -i patterns2015.grd -o patterns2015.txt
 gpat_distmtx -i patterns2015.txt -o similarity2015.csv
 ```
 
@@ -904,7 +908,7 @@ gpat_distmtx -i patterns2015.txt -o similarity2015.csv
 ---
 ### Clustering
 
-- For example, the `gpat_read_distmtx()` function can be used to read the data in R:
+- For example, use the `gpat_read_distmtx()` function from the **rgeopat2** package to read the data into R:
 
 ```{r, eval=FALSE}
 dist_2015 = gpat_read_distmtx("similarity2015.csv")
@@ -917,10 +921,17 @@ dist_2015 = gpat_read_distmtx("similarity2015.csv")
 <!-- maybe add some comments -->
 
 ```{r, eval=FALSE}
+# based on the dissimilarity matrix output of GeoPAT 2, 
+# motifels are clustered using hierarchical clustering method
 hclust_result = hclust(d = dist_2015, method = "ward.D2")
+# the dendrogram visualization
 plot(hclust_result, labels = FALSE)
 rect.hclust(hclust_result, k = 12, border = "blue")
+# the data is divided into 12 clusters
 hclust_cut = cutree(hclust_result, 12)
+# a spatial object containing a grid of motifels is created
+my_grid = gpat_create_grid("patterns2015.grd.hdr")
+# identifiers of the new clusters are added to our spatial object containing a grid of motifels
 my_grid$class = hclust_cut
 plot(my_grid["class"])
 ```
@@ -928,8 +939,8 @@ plot(my_grid["class"])
 ---
 ### Clustering
 
-We cluster motifels based on the dissimilarity matrix output of GeoPAT 2 using hierarchical clustering (function `hclust()`).
-Based on the dendrogram visualization (`plot()`), we decide that the data should be divided into 12 clusters (`cutree()`):
+- We cluster motifels based on the dissimilarity matrix output of GeoPAT 2 using hierarchical clustering (function `hclust()`).
+- Based on the dendrogram visualization (`plot()`), we decide that the data should be divided into 12 clusters (`cutree()`):
 
 ```{r, echo=FALSE, fig.cap="Dendrogram representing hierarchical clustering", out.width=700, fig.align='center'}
 knitr::include_graphics("figs/extend03a.png")
@@ -939,7 +950,7 @@ knitr::include_graphics("figs/extend03a.png")
 ### Clustering
 
 .left-column2[
-Finally, we add identifiers of the new clusters to our spatial object containing a grid of motifels and visualize it:
+- Finally, we add identifiers of the new clusters to our spatial object containing a grid of motifels and visualize it:
 ]
 
 .right-column2[
@@ -956,18 +967,56 @@ knitr::include_graphics("figs/extend03b.png")
 ---
 ### Clustering - code
 
-<!-- explain -->
+Step 1. Creating a grid of motifels.
+
+```{bash, eval=FALSE}
+gpat_gridhis -i cci_lc2015.tif -o patterns2015.grd -s prod -z 200 -f 200
+```
+
+Step 2. Converting the output grid file into a text file that can be read by standard software, such as R, Python, Excel.
+It can be also used in some **GeoPAT 2** workflows.
+
+```{bash, eval=FALSE}
+gpat_grid2txt -i patterns2015.grd -o patterns2015.txt
+```
+
+Step 3. Calculating a similarity matrix between motifels
 
 ```{bash, eval=FALSE}
 gpat_distmtx -i patterns2015.txt -o similarity2015.csv
 ```
 
+---
+### Clustering - R code
+
+- Based on the dissimilarity matrix output of GeoPAT 2, motifels are clustered using hierarchical clustering method
+
 ```{r, eval=FALSE}
-dist_2015 = gpat_read_distmtx("similarity2015.csv")
 hclust_result = hclust(d = dist_2015, method = "ward.D2")
+```
+
+- The dendrogram is visualized
+
+```{r, eval=FALSE}
 plot(hclust_result, labels = FALSE)
 rect.hclust(hclust_result, k = 12, border = "blue")
+```
+
+- The data is divided into 12 clusters
+
+```{r, eval=FALSE}
 hclust_cut = cutree(hclust_result, 12)
+```
+
+- A spatial object containing a grid of motifels is created
+
+```{r, eval=FALSE}
+my_grid = gpat_create_grid("patterns2015.grd.hdr")
+```
+
+- Identifiers of the new clusters are added to our spatial object containing a grid of motifels
+
+```{r, eval=FALSE}
 my_grid$class = hclust_cut
 plot(my_grid["class"])
 ```
