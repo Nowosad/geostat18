@@ -508,8 +508,7 @@ class: middle, center
 
 # Compare
 
----
-### Compare
+<!--
 
 Imagine you have two values expressing the world population in 1950 (2.5 billion people) and 2012 (7.1 billion people).
 How would you compare the change in the world population?
@@ -528,15 +527,16 @@ This can be used to determine how land cover changes.
 Two raster land cover maps are just analyzed pixel by pixel, e.g. this pixel did change from forest to agriculture and that pixel did not change as it is classified as forest on both maps.
 It a good approach when we are interested in, e.g. overall changes over an extended area.
 This way you can say, for example, that globally in the last 25 year we lost this area of forest, but gained this area of agriculture.
+-->
 
 ---
 ### Compare
 
 .pull-left[
-However, while this approach is helpful in many cases, it cannot solve all of the problems. 
+<!--However, while this approach is helpful in many cases, it cannot solve all of the problems. -->
 Let’s consider these two areas, the left one represents an earlier time A and the right one represents a later time B.
 
-```{r, echo=FALSE, fig.cap="Example landscape in two times A and B", out.width=500, fig.align='center'}
+```{r, echo=FALSE, fig.cap="Example landscape in two times A and B", out.width=600, fig.align='center'}
 knitr::include_graphics("figs/compare01a.png")
 ```
 ]
@@ -544,14 +544,14 @@ knitr::include_graphics("figs/compare01a.png")
 .pull-right[
 When we compare it using the standard method (pixel by pixel) we get the result below:
 
-```{r, echo=FALSE, fig.cap="Pixel by pixel change in the example landscape between time A and time B", out.width=350, fig.align='center'}
+```{r, echo=FALSE, fig.cap="Pixel by pixel change in the example landscape between time A and time B", out.width=375, fig.align='center'}
 knitr::include_graphics("figs/compare01b.png")
 ```
 
-The changes analyzed this way are very prominent - about half of the area had changed the category.
-However, when you look back at the whole landscape in time A and B, you should notice that both images are very similar if one disregards details and orientations. 
-They both have the same number of categories, their share in the landscape is comparable and they are arranged in a similar spatial pattern.
-While we can say that many pixels have changed their values, we cannot say that this landscape’s pattern changed a lot.
+<!-- The changes analyzed this way are very prominent - about half of the area had changed the category. -->
+<!-- However, when you look back at the whole landscape in time A and B, you should notice that both images are very similar if one disregards details and orientations.  -->
+<!-- They both have the same number of categories, their share in the landscape is comparable and they are arranged in a similar spatial pattern. -->
+- While we can say that many pixels have changed their values, we cannot say that this landscape’s pattern changed a lot.
 ]
 
 ---
@@ -559,7 +559,7 @@ While we can say that many pixels have changed their values, we cannot say that 
 
 Therefore, to be able to fully describe the change of a landscape, we need to be able not only to see the changes in single pixels but also changes in spatial patterns.
 
-Pixel by pixel analyses are a part of standard raster calculators, but comparing spatial patterns is a role for GeoPAT 2. 
+Pixel by pixel analyses are a part of standard raster calculators, but comparing spatial patterns is a role for **GeoPAT 2**. 
 This consists of two steps:
 
 1. Creating a grid of motifels.
@@ -577,8 +577,7 @@ gpat_gridhis -i cci_lc2015.tif -o patterns2015.grd -z 50 -f 50 -s cooc
 - In the code above, we specify the input (`-i`) and the outputs (`-o`) files, while other parameters control a size of motifels and a signature used.
 - Here, each motifel is a rectangle of 15,000 by 15,000 meters (`-z 50`: 50 pixels x map resolution of 300 meters).
 - Importantly, motifels should not overlap, therefore we shift the subsequent motifels by 15,000 meters (`-f 50`: 50 pixels x map resolution of 300 meters).
-- The last argument, `-s`, is crucial here. 
-- We can use `-s prod` that only represents shares of land cover categories or `-s cooc`, a spatial co-occurrence, that represents a spatial pattern.
+- The last argument, `-s`, is crucial here. We can use `-s prod` that only represents shares of land cover categories or `-s cooc`, a spatial co-occurrence, that represents a spatial pattern.
 
 ---
 ### Compare - step 2
@@ -588,7 +587,7 @@ Three parameters are required here:
 
 - `-i` - this parameter is used twice, for the first and the second input grid (results of the first step)
 - `-o` - a name of the output GeoTIFF file
-- `-m` - selected [**similarity metric**](read [the previous blog post](/post/pattern-based-spatial-analysis-core-ideas) to learn more about **similarity metrics**)
+- `-m` - selected **similarity metric**
 
 ```{bash, eval = FALSE}
 gpat_compare -i patterns2000.grd -i patterns2015.grd -o similarity0015.tif -m jsd
@@ -600,10 +599,11 @@ gpat_compare -i patterns2000.grd -i patterns2015.grd -o similarity0015.tif -m js
 .left-column2[
 - The result is a raster map of similarities between Australia's land cover in 2000 and 2015.
 - Each pixel in this raster has a resolution of 15,000 meters and a value between 0 and 1.
-- The largest value, 1, means that the spatial pattern in these two years is identical (no change in pattern has occurred), while lower values represent areas with more and more dissimilar patterns (increasing degree of change in pattern has occurred).
-- Large areas in northern and south-eastern Australia showed no change or very small change of spatial patterns of land cover (values of similarity close to 1). 
-- At the same time, there are a visible number of changed landscapes and their spatial distribution is not random. 
-- Now, they can be analyzed in more detail - we can look at what kind of landscapes changed the most (e.g. mosaic of forest and grassland), what is a trend in patterns changes (replacing grasslands with croplands), or what is the degree of spatial pattern changes.
+- The largest value, 1, means that the spatial pattern in these two years is identical.
+- Lower values represent areas with more and more dissimilar patterns.
+<!-- - Large areas in northern and south-eastern Australia showed no change or very small change of spatial patterns of land cover (values of similarity close to 1).  -->
+<!-- - At the same time, there are a visible number of changed landscapes and their spatial distribution is not random.  -->
+- They can be analyzed in more detail - we can look at what kind of landscapes changed the most (e.g. mosaic of forest and grassland), what is a trend in patterns changes (replacing grasslands with croplands), or what is the degree of spatial pattern changes.
 ]
 
 .right-column2[
@@ -622,7 +622,7 @@ knitr::include_graphics("figs/compare04.png")
 ]
 
 .pull-right[
-- Just to give you an example, below are six pairs of landscapes of different levels of similarity:
+Below are six pairs of landscapes of different levels of similarity:
 - The most extreme example in top right corner represents an almost complete change from a bare area into a sparse vegetation.
 - The next ones show decreasing levels of change, with the fifth example where just a small percentage of the area actually had changed.
 - Finally, the last example has a similarity of 1, which means that its spatial pattern did not change. 
@@ -631,11 +631,16 @@ knitr::include_graphics("figs/compare04.png")
 ---
 ### Compare - code
 
-<!-- explain -->
+Step 1. Creating two grids of motifels.
 
 ```{bash, eval = FALSE}
 gpat_gridhis -i cci_lc2000.tif -o patterns2000.grd -z 50 -f 50 -s cooc 
 gpat_gridhis -i cci_lc2015.tif -o patterns2015.grd -z 50 -f 50 -s cooc
+```
+
+Step 2. Comparing two grids of motifels
+
+```{bash, eval = FALSE}
 gpat_compare -i patterns2000.grd -i patterns2015.grd -o similarity0015.tif -m jsd
 ```
 
@@ -646,8 +651,18 @@ gpat_compare -i patterns2000.grd -i patterns2015.grd -o similarity0015.tif -m js
 knitr::include_graphics("figs/change_det.png")
 ```
 
-- **Nowosad, J., Stepinski T.F., Netzel P.**, 2018. *Global mapping of changes in landscapes and coverages of vegetation types from the ESA land cover 1992-2015 time series*. https://dx.doi.org/10.31223/osf.io/k3rmn
+- **Nowosad, J., Stepinski, T.F., Netzel, P.**, 2018. *Global mapping of changes in landscapes and coverages of vegetation types from the ESA land cover 1992-2015 time series*. https://dx.doi.org/10.31223/osf.io/k3rmn
 - **Netzel, P. and Stepinski, T.F.**, 2015. *Pattern-Based Assessment of Land Cover Change on Continental Scale With Application to NLCD 2001–2006*. IEEE Transactions on Geoscience and Remote Sensing, 53(4), pp.1773-1781.
+
+---
+### Compare - resources
+
+```{r, out.width="750px", echo=FALSE, fig.align='center'}
+knitr::include_graphics("figs/global_changes.png")
+```
+
+- **Nowosad, J., Stepinski, T.**, 2018. *Global changes in landscapes between 1992 and 2015*. http://doi.org/10.5281/zenodo.1323780
+
 
 ---
 layout: false
