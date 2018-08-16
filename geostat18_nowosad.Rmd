@@ -332,8 +332,8 @@ class: middle, center
 ---
 ### Search
 
-- Nowadays, convenient search engines (such as [Google](https://www.google.com/) or [DuckDuckGo](https://duckduckgo.com/)) are essential tools in everyday life. 
-We check the news, look for the products reviews, or find the way [how to make solar eclipse glasses](https://trends.google.com/trends/yis/2017/GLOBAL/).
+- Convenient search engines (such as [Google](https://www.google.com/) or [DuckDuckGo](https://duckduckgo.com/)) are essential tools in everyday life. 
+<!-- We check the news, look for the products reviews, or find the way [how to make solar eclipse glasses](https://trends.google.com/trends/yis/2017/GLOBAL/). -->
 Most of our searches have one thing in common though - they are based on text phrases.
 Additionally, some less common search methods are possible, including [reverse image search](https://support.google.com/websearch/answer/1325808).
 
@@ -343,18 +343,22 @@ There are also methods that search based on spatial properties of the data, for 
 You can look for intersections, touches, is within, etc.
 Finally, it is possible to search by distance.
 
+```{r, echo=FALSE, out.width=1000, fig.align='center'}
+knitr::include_graphics("figs/search_examples.png")
+```
+
 <!-- add images -->
 
 ---
 ### Search
 
-Can you guess what are we missing in this long list?
-Yes, you're (probably) right!
-Finding places with similar spatial patterns is not a standard spatial operation.
-However, it could be useful to solve many potential questions.
+<!-- Can you guess what are we missing in this long list? -->
+<!-- Yes, you're (probably) right! -->
+- Finding places with similar spatial patterns is not a standard spatial operation.
+- It could be useful to solve many potential questions. 
 For example, you observed some ecological process and assume that it depends on a pattern of land cover.
 Next, you need to find and study areas of similar land cover patterns to validate your results.
-Fortunately, finding similar spatial patterns is one of the **GeoPAT 2** main features.
+- Fortunately, finding similar spatial patterns is one of the **GeoPAT 2** main features.
 
 It consists of three steps:
 
@@ -366,9 +370,9 @@ It consists of three steps:
 ### Search
 
 .left-column2[
-- Spatial pattern search requires just two things - a query (location of interest) and a context (the same data of a larger area).
-- In this example, we use a 6 by 6 km site in Pilliga Forests in New South Wales, Australia as our location of interest.
-- This area is mostly occupied by evergreen and deciduous broad-leaved forest, but also has a few smaller patches of shrublands.
+- Spatial pattern search requires just two things - **a query** (location of interest) and **a context** (the same data of a larger area).
+- In this example, we use **a 6 by 6 km site in Pilliga Forests in New South Wales, Australia** as our location of interest.
+<!-- - This area is mostly occupied by evergreen and deciduous broad-leaved forest, but also has a few smaller patches of shrublands. -->
 ]
 
 .right-column2[
@@ -469,6 +473,9 @@ knitr::include_graphics("figs/search04.png")
 ### Search - code
 
 <!-- explain -->
+1. Extracting local pattern features of a query (location of interest).
+2. Creating a grid of motifels.
+3. Comparing a query and a grid of motifels.
 
 ```{bash, eval=FALSE}
 gpat_pointshis -i cci_lc2015.tif -o query_signature.txt -s cooc -x 1457570 -y -3562186 -z 20
