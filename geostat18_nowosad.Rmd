@@ -1,7 +1,7 @@
 ---
 title: "GeoPAT 2"
-subtitle: "analysis of spatial and temporal patterns"
-author: "Jakub Nowosad"
+subtitle: '`r icon::fa("puzzle-piece", size = 3, animate = "still", rotate = 260)`<br><br>analysis of spatial and temporal patterns'
+author: "<br>Jakub Nowosad (https://nowosad.github.io/)"
 date: "2018-08-22 (updated: `r Sys.Date()`)"
 output:
   xaringan::moon_reader:
