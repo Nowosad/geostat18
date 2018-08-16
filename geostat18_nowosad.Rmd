@@ -1030,26 +1030,28 @@ class: middle, center
 ---
 ### Extendibility
 
-GeoPAT 2 gives its users a lot of freedom, having a large number of possible workflows:
+**GeoPAT 2** gives its users a lot of freedom, having a large number of possible workflows:
 
-```{r, echo=FALSE, fig.cap="Outline of the GeoPAT 2 architecture", out.width=700, fig.align='center'}
+```{r, echo=FALSE, out.width=700, fig.align='center'}
 knitr::include_graphics("figs/gpat2.png")
 ```
 
-Some of them can consist of only one step, while others require several steps.
-However, that is not the end of GeoPAT 2 capabilities - it is also possible to extract spatial signature or calculate distance matrix and use these outputs in further analysis outside of GeoPAT 2.
-For example, you can cluster areas of similar patterns or use machine learning methods to find numerical relationships between patterns descriptors and other variables.
-Finally, there are several experimental features of GeoPAT 2, including a set of methods for analysis of spatiotemporal data.
+- Some of them can consist of only one step, while others require several steps.
+- However, that is not the end of GeoPAT 2 capabilities - it is also possible to extract spatial signature or calculate distance matrix and use these outputs in further analysis outside of **GeoPAT 2**.
+<!-- For example, you can cluster areas of similar patterns or use machine learning methods to find numerical relationships between patterns descriptors and other variables. -->
+- Finally, there are several experimental features of **GeoPAT 2**, including a set of methods for analysis of spatiotemporal data.
+
+
+<!-- - Most of the GeoPAT 2 modules depends on spatial information about patterns in the form of [signatures](/post/pattern-based-spatial-analysis-core-ideas/#signature). -->
+<!-- - We can [find the most similar signatures (search)](/post/geopat-2-search), [compare local signatures (comparison)](/post/geopat-2-compare), or [merge areas with similar signatures (segmentation)](/post/geopat-2-segmentation).  -->
+<!-- - This information can be also used outside of **GeoPAT 2** - it is possible to fit a spatial pattern information to your own workflow. -->
 
 ---
 ### Extracting information about spatial patterns
 
-Most of the GeoPAT 2 modules depends on spatial information about patterns in the form of [signatures](/post/pattern-based-spatial-analysis-core-ideas/#signature).
-We can then [find the most similar signatures (search)](/post/geopat-2-search), [compare local signatures (comparison)](/post/geopat-2-compare), or [merge areas with similar signatures (segmentation)](/post/geopat-2-segmentation). 
-This information can be also used outside of GeoPAT 2 - it is possible to fit a spatial pattern information to your own workflow.
-
 There are three main ways to extract information about spatial patterns.
-The first one extracts information from a regular grid of motifels.
+
+- **The first one** extracts information from a regular grid of motifels.
 In the example below, we create a grid of motifels with information about the composition of land cover categories (`-s prod`).
 Next, using `gpat_grid2txt` we convert the output grid file into a text file that can be read by standard software, such as R, Python, Excel.
 
@@ -1058,22 +1060,16 @@ gpat_gridhis -i cci_lc2015.tif -o patterns2015.grd -s prod -z 200 -f 200
 gpat_grid2txt -i patterns2015.grd -o patterns2015.txt
 ```
 
----
-### Extracting information about spatial patterns
-
-The second one extracts a spatial pattern information based on point coordinates within the given buffer.
+- **The second one** extracts a spatial pattern information based on point coordinates within the given buffer.
 Below, we extract a land cover composition (Cartesian product) of a square area of 30 by 30 pixels (9km by 9km) around Australia's capital - Canberra:
 
 ```{bash, eval=FALSE}
 gpat_pointshis -i cci_lc2015.tif -o patterns_pts.txt -s prod -z 30 -x 1370000 -y -4050000
 ```
 
----
-### Extracting information about spatial patterns
-
-The third one involves extracting information about spatial patterns using irregular polygons with `gpat_polygon`.
+- **The third one** involves extracting information about spatial patterns using irregular polygons with `gpat_polygon`.
 Let's say, we are interested in extracting land cover composition in each of TNC's terrestrial ecoregions in Australia.
-*(Due to large sizes of some ecoregions, the below calculation can require about 16GB RAM available.)*
+*(Due to large sizes of some ecoregions, the below calculation requires about 16GB RAM available.)*
 
 ```{bash, eval=FALSE}
 gpat_polygon -i cci_lc2015.tif -e tnc_terr_ecoregions.tif -o patterns_poly.txt -s prod
@@ -1082,13 +1078,7 @@ gpat_polygon -i cci_lc2015.tif -e tnc_terr_ecoregions.tif -o patterns_poly.txt -
 ---
 ### Extracting information about spatial patterns
 
-To ease some of the non-standard GeoPAT 2 operations we created an R package called **rgeopat2**.
-
-```{r, eval=FALSE}
-library(rgeopat2)
-```
-
-Its function `gpat_read_txt()` reads the output text from GeoPAT 2 and formats it in a convinent way:
+The `gpat_read_txt()` function from the **rgeopat2** package reads the output text from **GeoPAT 2** and formats it in a convinent way:
 
 ```{r, eval=FALSE}
 patterns_poly = gpat_read_txt("patterns_poly.txt")
@@ -1105,8 +1095,9 @@ knitr::kable(patterns_poly[c(1, 34), ], digits = 2, caption = "Example of two li
 |1  | 0.00| 0.00|  0| 0.00| 0.00| 0.00| 0.00| 0.00| 0.00|   0| 0.00|   0| 0.00| 0.00| 0.00| 0.00|   0| 0.00| 0.00| 0.00|   0| 1.00|     0|
 |34 | 0.00| 0.00|  0| 0.00| 0.00| 0.00| 0.00| 0.00| 0.00|   0| 0.00|   0| 0.00| 0.00| 0.54| 0.45|   0| 0.00| 0.00| 0.00|   0| 0.00| 10072|
 
-The last column in this table, `cat`, represents the id of the terrestrial ecoregion, while the rest of the columns are the land cover categories.
-For example, `cat` 0 is an ocean and 100% of its area is covered by water (class X22), while `cat` 10072, Gibson Desert, is located in the middle of the continent and is covered by grassland (X15) and sparse vegetation (X16).
+- The last column in this table, `cat`, represents the id of the terrestrial ecoregion, while the rest of the columns are the land cover categories.
+- `cat` 0 is an ocean and 100% of its area is covered by water (class X22).
+- `cat` 10072, Gibson Desert, is located in the middle of the continent and is covered by grassland (X15) and sparse vegetation (X16).
 
 ---
 ### Spatiotemporal pattern-based analysis
