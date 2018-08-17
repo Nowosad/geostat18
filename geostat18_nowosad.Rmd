@@ -45,7 +45,7 @@ knitr::include_graphics("figs/south_america_sel.png")
 ### Pattern-Based Spatial Analysis
 
 The core idea it to **transform data from a large number of cells having simple content (one value) to a much smaller number of blocks with complex content**.
-In other words, decreasing a spatial resolution while increasing thematic resolution.
+In other words, decreasing a spatial resolution while increasing information.
 
 Many **numerical signatures** (e.g. Cartesian product, co-occurrence histogram, landscape indices vector) could represent the complex content.
 It is also possible to measure distances between complex contents using **dissimilarity measures** (e.g. JSD, Euclidean distance).  
