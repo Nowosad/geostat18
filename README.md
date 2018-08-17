@@ -2,7 +2,7 @@
 
 [GEOSTAT18](http://opengeohub.org/node/146). Prague, Czech Republic, 2018-08-23
 
-**Slides:** https://nowosad.github.io/geostat18/geostat18_nowosad. They contain installation instructions and links to the required datasets.
+**Slides:** https://nowosad.github.io/geostat18/geostat18_nowosad.html. They contain installation instructions and links to the required datasets.
 
 **GeoPAT 2 (Geospatial Pattern Analysis Toolbox)** is a standalone suite of modules written in C. - Dedicated to the analysis of large Earth Science datasets in their entirety using spatial and/or temporal patterns.
 **GeoPAT’s** core idea is to tessellate global spatial data into a grid of square blocks of original cells (pixels).
